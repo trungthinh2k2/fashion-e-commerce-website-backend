@@ -17,5 +17,11 @@ spring:
 aws-s3:
   access-key: ${AWS_ACCESS_KEY}
   secret-key: ${AWS_SECRET_KEY}
-  region: AP_SOUTHEAST_1
+  region: ap-southeast-1
   bucket-name: fashion-e-commerce
+
+logging:
+    level:
+        org:
+        springframework:
+            web: Trace
