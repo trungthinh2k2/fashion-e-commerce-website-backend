@@ -13,10 +13,14 @@ spring:
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
 
 aws-s3:
-  access-key: ${AWS_ACCESS_KEY}
-  secret-key: ${AWS_SECRET_KEY}
+  access-key: AKIA6GBMBGHDNP3QOZNO
+  secret-key: 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
   region: ap-southeast-1
   bucket-name: fashion-e-commerce
 
@@ -25,3 +29,40 @@ logging:
         org:
         springframework:
             web: Trace
+server:
+  error:
+    include-stacktrace: never
+
+api:
+  responseCodes:
+    ok.description: Successfully
+    created.description: The data was created successfully
+    badRequest.description: Error data, request, or invalid data. See details in the response message
+    notFound.description: The requested data does not exist
+    dataExists.description: The data already exists
+    unauthorized.description: The request has not been verified, please log in
+    forbidden.description: The user has not been granted permission to use the resource
+  operation:
+    create:
+      summary: Create new
+      description: Lưu mới dữ liệu bới object được gửi lên trong body request
+    partial-update:
+      summary: update options
+      description: |
+        Cập nhật một hoặc nhiều thông tin của dữ liệu
+    full-update:
+      summary: update
+      description: |
+        Cập nhật toàn bộ thông tin của dữ liệu theo object trong body request
+    get-detail:
+      summary: Get detailed information
+      description: Lấy thông tin chi tiết của dữ liệu có id được gửi trong path parameter
+    get-list:
+      summary: Get list
+      description: Lấy danh sách dữ liệu theo các tham số được gửi lên
+    find:
+      summary: find
+      description: Tìm các dữ liệu theo các tham số được gửi lên
+    delete:
+      summary: delete data
+      description: Xoá một dữ liệu bằng id được truyền lên trong request parameter

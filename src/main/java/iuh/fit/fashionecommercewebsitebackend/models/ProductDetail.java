@@ -17,15 +17,15 @@ public class ProductDetail {
     @Column(name = "product_detail_id", nullable = false)
     private String id;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "size_id", nullable = false)
     private Size size;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "color_id", nullable = false)
     private Color color;
 

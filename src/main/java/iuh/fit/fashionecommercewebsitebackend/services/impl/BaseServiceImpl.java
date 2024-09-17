@@ -1,11 +1,13 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.repositories.customizations.BaseCustomizationRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BaseService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +44,12 @@ public class BaseServiceImpl<T, ID extends Serializable>
     @Override
     public T update(ID id, T t) {
         repository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        return null;
+        return repository.save(t);
     }
 
     @Override
     public T updatePatch(ID id, Map<String, ?> data) {
-        T t = repository.findById(id).orElseThrow();
+        T t = repository.findById(id).orElseThrow(()-> new DataNotFoundException("Not found"));
         Class<?> clazz = t.getClass();
         Set<String> keys = data.keySet();
         Method[] methods = clazz.getMethods();
@@ -61,7 +63,7 @@ public class BaseServiceImpl<T, ID extends Serializable>
                             value = Enum.valueOf((Class<Enum>) method.getParameterTypes()[0], (String) value);
                         }
                         method.invoke(t, value);
-                    } catch (Exception e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -76,6 +78,10 @@ public class BaseServiceImpl<T, ID extends Serializable>
 
     @Override
     public void deleteById(ID id) {
+        Optional<T> t = repository.findById(id);
+        if (t.isEmpty()) {
+            throw new DataNotFoundException( "Not found");
+        }
         repository.deleteById(id);
     }
 
