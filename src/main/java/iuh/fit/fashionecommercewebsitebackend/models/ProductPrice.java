@@ -25,9 +25,19 @@ public class ProductPrice {
     @Column(name = "discounted_price", columnDefinition = "DECIMAL(10,2)")
     private Double discountedPrice;
 
+
+    @Column(name = "discounted_amount", columnDefinition = "decimal(10,2)")
+    private Double discountedAmount;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "issue_date")
     private LocalDateTime issueDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "expired_date")
+    private LocalDateTime expiredDate;
+
+    private String note;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

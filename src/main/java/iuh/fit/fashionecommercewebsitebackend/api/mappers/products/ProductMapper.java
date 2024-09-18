@@ -13,10 +13,6 @@ import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProviderServic
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
-
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
@@ -25,7 +21,7 @@ public class ProductMapper {
     private final CategoryService categoryService;
     private final ProviderService providerService;
 
-    public Product ProductDtoToProduct(ProductDto productDto) {
+    public Product productDtoToProduct(ProductDto productDto) {
 
         Brand brand = brandService.findById(productDto.getBrandId())
                 .orElseThrow(() -> new DataNotFoundException("Brand not found"));

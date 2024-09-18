@@ -24,7 +24,7 @@ public class CategoryController {
     @CreateResponse
     @PostMapping
     public Response createCategory(@Valid @RequestBody CategoryDto categoryDto) throws DataExistsException {
-        Category category = categoryMapper.CategoryDtoToCategory(categoryDto);
+        Category category = categoryMapper.categoryDtoToCategory(categoryDto);
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Category created successfully",
@@ -55,7 +55,7 @@ public class CategoryController {
     @FullUpdateResponse
     @PutMapping("/{id}")
     public Response updateCategory(@PathVariable int id, @Valid @RequestBody CategoryDto categoryDto) throws DataExistsException {
-        Category category = categoryMapper.CategoryDtoToCategory(categoryDto);
+        Category category = categoryMapper.categoryDtoToCategory(categoryDto);
         category.setId(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),

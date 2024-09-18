@@ -14,7 +14,7 @@ public class ProviderMapper {
 
     private final AddressService addressService;
 
-    public Provider ProviderDtoToProvider(ProviderDto providerDto) {
+    public Provider providerDtoToProvider(ProviderDto providerDto) {
 
         Address address = addressService.findById(providerDto.getAddressId())
                 .orElseThrow(() -> new DataNotFoundException("Brand not found"));

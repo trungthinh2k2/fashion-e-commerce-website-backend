@@ -13,7 +13,7 @@ public class CategoryMapper {
 
     private final CategoryService categoryService;
 
-    public Category CategoryDtoToCategory(CategoryDto categoryDto) throws DataExistsException {
+    public Category categoryDtoToCategory(CategoryDto categoryDto) throws DataExistsException {
 
         categoryService.checkExistsCategoryName(categoryDto.getCategoryName());
         Category category = new Category();

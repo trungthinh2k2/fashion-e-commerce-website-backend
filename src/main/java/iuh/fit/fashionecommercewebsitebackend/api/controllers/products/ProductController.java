@@ -4,8 +4,6 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.Product
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
-import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
-import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProductMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
@@ -46,11 +44,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Response getById(@PathVariable String id) throws DataExistsException {
+    public Response getById(@PathVariable String id){
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Get product by id successfully",
-                productService.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"))
+//                productService.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"))
+                productService.findProductById(id)
         );
     }
 

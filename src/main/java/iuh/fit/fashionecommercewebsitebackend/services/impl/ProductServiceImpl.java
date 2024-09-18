@@ -1,12 +1,15 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ProductResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProductMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
+import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductImage;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
+import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductImageRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
@@ -30,6 +33,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     private ProductMapper productMapper;
     private S3Upload s3Upload;
     private ProductImageRepository productImageRepository;
+    private ProductDetailRepository productDetailRepository;
 
     public ProductServiceImpl(JpaRepository<Product, String> repository) {
         super(repository, Product.class);
@@ -55,6 +59,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         this.productImageRepository = productImageRepository;
     }
 
+    @Autowired
+    public void setProductDetailRepository(ProductDetailRepository productDetailRepository) {
+        this.productDetailRepository = productDetailRepository;
+    }
+
     @Override
     public Product save(ProductDto productDto) throws DataExistsException {
         if (productRepository.existsByProductName(productDto.getProductName())) {
@@ -63,7 +72,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
 
         String id = "Pro" + LocalDate.now().format(DateTimeFormatter.ofPattern("-ddMMyyyy-")) + UUID.randomUUID().toString().substring(0, 8);
 
-        Product product = productMapper.ProductDtoToProduct(productDto);
+        Product product = productMapper.productDtoToProduct(productDto);
         product.setId(id);
 
         product = super.save(product);
@@ -74,7 +83,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
     @Override
-    public void deactivateProduct(String id) throws DataExistsException {
+    public void deactivateProduct(String id) {
         Product product = super.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"));
         product.setProductStatus(Status.INACTIVE);
         super.save(product);
@@ -85,7 +94,19 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         return productRepository.findAllByProductStatus(Status.ACTIVE);
     }
 
-    private void processProductImages(Product product, ProductDto productDto) throws DataExistsException {
+    @Override
+    public ProductResponse findProductById(String id) {
+        Product product = super.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"));
+        List<ProductImage> productImages = productImageRepository.findByProductId(id);
+        List<ProductDetail> productDetails = productDetailRepository.findByProductId(id);
+        return ProductResponse.builder()
+                .product(product)
+                .productImage(productImages)
+                .productDetail(productDetails)
+                .build();
+    }
+
+    private void processProductImages(Product product, ProductDto productDto) {
         List<MultipartFile> images = productDto.getImages();
         if (images == null || images.isEmpty()) {
             return;
