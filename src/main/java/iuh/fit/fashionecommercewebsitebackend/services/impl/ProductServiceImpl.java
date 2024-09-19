@@ -1,6 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ProductResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
@@ -12,6 +13,7 @@ import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductImageRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
+import iuh.fit.fashionecommercewebsitebackend.repositories.customizations.ProductQuery;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
 import iuh.fit.fashionecommercewebsitebackend.utils.S3Upload;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     private S3Upload s3Upload;
     private ProductImageRepository productImageRepository;
     private ProductDetailRepository productDetailRepository;
+    private ProductQuery productQuery;
 
     public ProductServiceImpl(JpaRepository<Product, String> repository) {
         super(repository, Product.class);
@@ -62,6 +65,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     @Autowired
     public void setProductDetailRepository(ProductDetailRepository productDetailRepository) {
         this.productDetailRepository = productDetailRepository;
+    }
+
+    @Autowired
+    public void setProductQuery(ProductQuery productQuery) {
+        this.productQuery = productQuery;
     }
 
     @Override
@@ -104,6 +112,21 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
                 .productImage(productImages)
                 .productDetail(productDetails)
                 .build();
+    }
+
+    @Override
+    public List<Product> findTop3ByOrderByCreatedAtDesc() {
+        return productRepository.findTop3ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Product> findProductsDiscount() {
+        return productRepository.findProductsDiscount();
+    }
+
+    @Override
+    public PageResponse<?> getProductsForUserRole(int pageNo, int pageSize, String[] search, String[] sort) {
+        return productQuery.getDataWithPage(pageNo, pageSize, search, sort);
     }
 
     private void processProductImages(Product product, ProductDto productDto) {

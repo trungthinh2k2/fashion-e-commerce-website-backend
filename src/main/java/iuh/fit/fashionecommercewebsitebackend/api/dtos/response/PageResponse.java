@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class PageResponse<T> {
     private int pageNo;
-    private int totalPage;
+    private long totalPage;
     private long totalElements;
     private T data;
 }

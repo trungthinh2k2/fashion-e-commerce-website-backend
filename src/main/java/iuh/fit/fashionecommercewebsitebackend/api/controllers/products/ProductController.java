@@ -1,11 +1,13 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.products;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
 import jakarta.validation.Valid;
@@ -43,12 +45,12 @@ public class ProductController {
         );
     }
 
+    @FindResponse
     @GetMapping("/{id}")
     public Response getById(@PathVariable String id){
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Get product by id successfully",
-//                productService.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"))
                 productService.findProductById(id)
         );
     }
@@ -63,6 +65,14 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/top3")
+    public Response getTop3Product() {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get top 3 products successfully",
+                productService.findTop3ByOrderByCreatedAtDesc()
+        );
+    }
 
     @PutMapping("/delete/{id}")
     public Response deactivateProduct(@PathVariable String id) throws DataExistsException {
@@ -79,6 +89,28 @@ public class ProductController {
         return new ResponseSuccess<>(HttpStatus.OK.value(),
                 "Product patched successfully",
                 productService.updatePatch(id, data));
+    }
+
+    @GetMapping("/discount")
+    public Response getProductsDiscount() {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all products discount successfully",
+                productService.findProductsDiscount()
+        );
+    }
+
+    @GetMapping("/page-product")
+    public Response pageProduct(@RequestParam(defaultValue = "1") int pageNo,
+                                @RequestParam(defaultValue = "10") int pageSize,
+                                @RequestParam(required = false) String[] sort,
+                                @RequestParam(required = false, defaultValue = "") String[] search
+    ) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all products successfully",
+                productService.getProductsForUserRole(pageNo, pageSize, search, sort)
+        );
     }
 
 }

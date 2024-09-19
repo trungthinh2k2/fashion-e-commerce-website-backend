@@ -18,10 +18,10 @@ public class ProductPriceDto {
     @Range(min = 0, max = 100, message = "Discount must be between 0 and 100")
     private Integer discount;
     @NotNull(message = "Issue date must not be null")
-    @FutureOrPresent(message = "Issue date must be greater than or equal to current date")
+//    @FutureOrPresent(message = "Issue date must be greater than or equal to current date")
     private LocalDateTime issueDate;
     @NotNull(message = "Expired date must not be null")
-    @Future(message = "Expired date must be greater than current date")
+//    @Future(message = "Expired date must be greater than current date")
     private LocalDateTime expiredDate;
     @NotNull(message = "Note must not be null")
     private String note;

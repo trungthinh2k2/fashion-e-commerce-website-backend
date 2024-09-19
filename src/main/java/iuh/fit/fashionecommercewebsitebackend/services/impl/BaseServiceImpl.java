@@ -87,6 +87,6 @@ public class BaseServiceImpl<T, ID extends Serializable>
 
     @Override
     public PageResponse<T> getDataWithPage(int pageNo, int pageSize, String[] search, String[] sortBy) {
-        return super.getDataWithPage(pageNo, pageSize, search, sortBy);
+        return (PageResponse<T>) super.getDataWithPage(pageNo, pageSize, search, sortBy);
     }
 }
