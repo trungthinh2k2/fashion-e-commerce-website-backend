@@ -1,6 +1,5 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.products;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -113,4 +112,16 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/page-product-discount")
+    public Response pageProductDiscount(@RequestParam(defaultValue = "1") int pageNo,
+                                @RequestParam(defaultValue = "10") int pageSize,
+                                @RequestParam(required = false) String[] sort,
+                                @RequestParam(required = false, defaultValue = "") String[] search
+    ) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all products discount successfully",
+                productService.getProductsDiscount(pageNo, pageSize, search, sort)
+        );
+    }
 }
