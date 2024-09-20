@@ -32,7 +32,7 @@ public class User extends BaseModel{
     private String username;
 
     @JsonIgnore
-    @Column(name = "password", length = 50)
+    @Column(name = "password", length = 1000)
     private String password;
 
     @Column(name = "date_of_birth", length = 50)

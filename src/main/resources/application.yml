@@ -3,7 +3,7 @@ spring:
     name: fashion-e-commerce-website-backend
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -38,8 +38,9 @@ aws-s3:
 logging:
     level:
         org:
-        springframework:
-            web: Trace
+#          springframework:
+#            web: Trace
+          security: Trace
 server:
   error:
     include-stacktrace: never
@@ -55,7 +56,7 @@ api:
     forbidden.description: The user has not been granted permission to use the resource
   operation:
     create:
-      summary: Create new
+      summary: Tạo mới
       description: Lưu mới dữ liệu bới object được gửi lên trong body request
     partial-update:
       summary: update options

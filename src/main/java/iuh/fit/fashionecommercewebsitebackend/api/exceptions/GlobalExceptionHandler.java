@@ -1,36 +1,47 @@
 package iuh.fit.fashionecommercewebsitebackend.api.exceptions;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends Throwable {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiError handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String errorMessage = error.getDefaultMessage();
+            errors.add(errorMessage);
+        });
+        return new ApiError(HttpStatus.BAD_REQUEST.value(), errors);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DataNotFoundException.class)
-    public ResponseEntity<Object> handleDataNotFoundException(DataNotFoundException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, "Data not found " + getRootCauseMessage(ex), ex));
+    public ApiError handleDataNotFoundException(DataNotFoundException ex) {
+        return new ApiError(HttpStatus.NOT_FOUND.value(), List.of(ex.getMessage()));
     }
 
-    @ExceptionHandler(DataExistsException.class)
-    public ResponseEntity<Object> handleDataExistsException(DataExistsException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, "Data exists " +  getRootCauseMessage(ex), ex));
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ApiError handleExpiredJwtException(ExpiredJwtException ex) {
+        return new ApiError(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage()));
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
-        return buildResponseEntity(new ApiError(HttpStatus.FORBIDDEN, getRootCauseMessage(ex), ex));
+    public ApiError handleForbiddenException(ForbiddenException ex) {
+        return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
-    }
-
-    private String getRootCauseMessage(Exception e) {
-        Throwable rootCause = ExceptionUtils.getRootCause(e);
-        return rootCause == null ? e.getMessage() : rootCause.getMessage();
-    }
 
 }

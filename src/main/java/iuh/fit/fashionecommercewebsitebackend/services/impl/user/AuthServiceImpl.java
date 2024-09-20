@@ -1,20 +1,31 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.user;
 
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.LoginRequestDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
+import iuh.fit.fashionecommercewebsitebackend.models.CustomUserDetails;
+import iuh.fit.fashionecommercewebsitebackend.models.Token;
 import iuh.fit.fashionecommercewebsitebackend.models.User;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Role;
+import iuh.fit.fashionecommercewebsitebackend.repositories.TokenRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.UserRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.EmailService;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.AuthService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.JwtService;
 import iuh.fit.fashionecommercewebsitebackend.utils.EmailDetails;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -24,6 +35,10 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenRepository tokenRepository;
+    private final JwtService jwtService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -53,6 +68,36 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    @Override
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) throws Exception {
+        String email = loginRequestDto.getEmail();
+        String password = loginRequestDto.getPassword();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException("Email not found"));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new DataNotFoundException("Password is not correct");
+        }
+
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+
+        String accessToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
+
+        Token token = new Token();
+        token.setRefreshToken(refreshToken);
+        token.setUser(user);
+        token.setIssueDate(LocalDateTime.now());
+        tokenRepository.save(token);
+
+        Cookie cookie = new Cookie("accessToken", accessToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(30 * 60); // 30 phút
+        response.addCookie(cookie);
+    }
+
     private User mapperToUser(UserRegisterDto userRegisterDto) throws DataExistsException {
 
         Optional<User> user = userRepository.findByEmail(userRegisterDto.getEmail());
@@ -66,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         String otp = generateOTP();
         User userResult =  User.builder()
                 .email(userRegisterDto.getEmail())
-                .password(userRegisterDto.getPassword())
+                .password(passwordEncoder.encode(userRegisterDto.getPassword()))
                 .username(userRegisterDto.getUsername())
                 .phone(userRegisterDto.getPhone())
                 .role(Role.ROLE_USER)

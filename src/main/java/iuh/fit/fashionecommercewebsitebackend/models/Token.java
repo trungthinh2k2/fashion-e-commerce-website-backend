@@ -20,10 +20,7 @@ public class Token {
     @Column(name = "token_id", nullable = false)
     private Integer id;
 
-    @Column(name = "access_token", length = 50)
-    private String accessToken;
-
-    @Column(name = "refresh_token", length = 50)
+    @Column(name = "refresh_token", length = 2000)
     private String refreshToken;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
