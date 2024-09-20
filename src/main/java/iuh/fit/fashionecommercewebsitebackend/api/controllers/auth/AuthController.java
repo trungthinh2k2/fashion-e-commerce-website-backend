@@ -1,9 +1,12 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.GeneralResponse;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,18 @@ public class AuthController {
                 HttpStatus.CREATED.value(),
                 "User registered successfully",
                 "Check OTP in your email"
+        );
+    }
+
+    @Operation(summary = "Verify email", description = "Tài khoản đã được tạo, cần xác thực email để kích hoạt tài khoản")
+    @GeneralResponse
+    @PostMapping("/verify-email")
+    public Response verifyEmail(@RequestBody VerifyEmailDto verifyEmailDto) throws Exception {
+        authService.verifyEmail(verifyEmailDto);
+        return new ResponseSuccess<>(
+            HttpStatus.OK.value(),
+            "Email verified successfully",
+            "You can now login"
         );
     }
 

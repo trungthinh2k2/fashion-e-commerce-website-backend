@@ -1,7 +1,9 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.user;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.models.User;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Role;
 import iuh.fit.fashionecommercewebsitebackend.repositories.UserRepository;
@@ -20,7 +22,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-
     private final UserRepository userRepository;
     private final EmailService emailService;
 
@@ -37,6 +38,19 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         emailService.sendHtmlMail(emailDetails);
 
+    }
+
+    @Override
+    public void verifyEmail(VerifyEmailDto verifyEmailDto) throws Exception {
+        String email = verifyEmailDto.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException("Email not found"));
+        if (user.getOtp().equals(verifyEmailDto.getOtp())) {
+            user.setVerify(true);
+            userRepository.save(user);
+        } else {
+            throw new DataExistsException("OTP is not correct");
+        }
     }
 
     private User mapperToUser(UserRegisterDto userRegisterDto) throws DataExistsException {
