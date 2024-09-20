@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductDetailRepository extends JpaRepository<ProductDetail, String> {
-    @EntityGraph(attributePaths = {"size", "color"})
+    @EntityGraph(value = "product_detail-entity-graph")
     List<ProductDetail> findByProductId(String productId);
 }

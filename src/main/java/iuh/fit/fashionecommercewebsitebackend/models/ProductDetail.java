@@ -11,8 +11,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "product_detail-entity-graph",
+                includeAllAttributes = true
+        )
+)
 public class ProductDetail {
-
     @Id
     @Column(name = "product_detail_id", nullable = false)
     private String id;
@@ -21,11 +26,11 @@ public class ProductDetail {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_id", nullable = false)
     private Size size;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)
     private Color color;
 
