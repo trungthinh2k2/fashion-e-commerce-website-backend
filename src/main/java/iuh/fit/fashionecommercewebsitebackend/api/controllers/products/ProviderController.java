@@ -1,5 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.products;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProviderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -17,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/providers")
 @RequiredArgsConstructor
+@SecurityRequirements({@SecurityRequirement(name = "bearerAuth")})
 public class ProviderController {
 
     private final ProviderService providerService;

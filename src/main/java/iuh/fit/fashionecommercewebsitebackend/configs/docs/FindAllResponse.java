@@ -14,6 +14,8 @@ import java.lang.annotation.*;
         description = "${api.operation.get-list.description}")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "${api.responseCodes.ok.description}"),
+        @ApiResponse(responseCode = "401", description = "${api.responseCodes.unauthorized.description}",
+                content = @Content),
         @ApiResponse(responseCode = "403", description = "${api.responseCodes.forbidden.description}",
                 content = @Content)
 })

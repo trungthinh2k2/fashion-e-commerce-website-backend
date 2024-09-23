@@ -17,6 +17,8 @@ import java.lang.annotation.*;
                 content = @Content),
         @ApiResponse(responseCode = "400", description = "${api.responseCodes.badRequest.description}",
                 content = @Content),
+        @ApiResponse(responseCode = "401", description = "${api.responseCodes.unauthorized.description}",
+                content = @Content),
         @ApiResponse(responseCode = "403", description = "${api.responseCodes.forbidden.description}",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "${api.responseCodes.dataExists.description}",
