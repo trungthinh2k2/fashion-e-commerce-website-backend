@@ -1,10 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.LoginRequestDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.ResetPasswordDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.*;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
@@ -100,11 +97,35 @@ public class AuthController {
     @Operation(summary = "Đặt lại mật khẩu", description = "Đặt lại mật khẩu khi bị quên mật khẩu")
     @GeneralResponse
     @PostMapping("/reset-password")
-    public Response resetPassword(@RequestBody ResetPasswordDto resetPasswordDto, HttpServletResponse response) throws Exception {
-        authService.resetPassword(resetPasswordDto, response);
+    public Response resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) throws Exception {
+        authService.resetPassword(resetPasswordDto);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Reset password successfully",
+                null
+        );
+    }
+
+    @Operation(summary = "Đổi mật khẩu", description = "Đổi mật khẩu khi đã đăng nhập")
+    @GeneralResponse
+    @PostMapping("/change-password")
+    public Response changePassword(@RequestBody ChangePasswordDto changePasswordDto) throws Exception {
+        authService.changePassword(changePasswordDto);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Change password successfully",
+                null
+        );
+    }
+
+    @Operation(summary = "Đăng xuất", description = "Đăng xuất tài khoản")
+    @GeneralResponse
+    @PostMapping("/logout")
+    public Response logout(@RequestBody String refreshToken) throws Exception {
+        authService.logout(refreshToken);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Logout successfully",
                 null
         );
     }

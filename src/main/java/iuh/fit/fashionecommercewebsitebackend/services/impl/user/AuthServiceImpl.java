@@ -1,9 +1,6 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.user;
 
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.LoginRequestDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.ResetPasswordDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
-import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.*;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.models.CustomUserDetails;
@@ -74,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) throws Exception {
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
         User user = userRepository.findByEmail(email)
@@ -104,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void refreshToken(String refreshToken, HttpServletResponse response) throws DataExistsException {
+    public void refreshToken(String refreshToken, HttpServletResponse response) {
         Token token = tokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new DataNotFoundException("Refresh token not found"));
         String email = jwtService.extractEmail(refreshToken);
@@ -148,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void verifyEmailOTPResetPassword(VerifyEmailDto verifyEmailDto) throws Exception {
+    public void verifyEmailOTPResetPassword(VerifyEmailDto verifyEmailDto) {
         String email = verifyEmailDto.getEmail();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("Email not found"));
@@ -161,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void resetPassword(ResetPasswordDto resetPasswordDto, HttpServletResponse response) throws Exception {
+    public void resetPassword(ResetPasswordDto resetPasswordDto) throws Exception {
         String email = resetPasswordDto.getEmail();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("Email not found"));
@@ -174,26 +171,30 @@ public class AuthServiceImpl implements AuthService {
             if (!tokens.isEmpty()) {
                 tokenRepository.deleteAll(tokens);
             }
-            CustomUserDetails userDetails = new CustomUserDetails(user);
-
-            String accessToken = jwtService.generateToken(userDetails);
-            String refreshToken = jwtService.generateRefreshToken(userDetails);
-
-            Token token = new Token();
-            token.setRefreshToken(refreshToken);
-            token.setUser(user);
-            token.setIssueDate(LocalDateTime.now());
-            tokenService.saveToken( user,token);
-
-            Cookie cookie = new Cookie("accessToken", accessToken);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(30 * 60); // 30 phút
-            response.addCookie(cookie);
         } else {
             throw new DataExistsException("OTP is not correct");
         }
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDto changePasswordDto) throws Exception {
+        String email = changePasswordDto.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException("Email not found"));
+        if (passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+            userRepository.save(user);
+        } else {
+            throw new DataExistsException("Old password is not correct");
+        }
+    }
+
+    @Override
+    public void logout(String refreshToken) throws DataNotFoundException {
+        Token token = tokenRepository.findByRefreshToken(refreshToken).orElseThrow(() ->
+                new DataNotFoundException("Refresh token is not exists")
+        );
+        tokenRepository.delete(token);
     }
 
     private User mapperToUser(UserRegisterDto userRegisterDto) throws DataExistsException {
