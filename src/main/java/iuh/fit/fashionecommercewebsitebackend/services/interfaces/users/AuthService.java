@@ -10,4 +10,5 @@ public interface AuthService {
     void register(UserRegisterDto userRegisterDto) throws Exception;
     void verifyEmail(VerifyEmailDto verifyEmailDto) throws Exception;
     void login(LoginRequestDto loginRequestDto, HttpServletResponse response) throws Exception;
+    void refreshToken(String refreshToken, HttpServletResponse response) throws DataExistsException;
 }

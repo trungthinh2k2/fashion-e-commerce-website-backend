@@ -55,7 +55,19 @@ public class AuthController {
         authService.login(loginRequestDto, response);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
-                "Đăng nhập thành công",
+                "Login successfully",
+                null
+        );
+    }
+
+    @Operation(summary = "Refresh Token", description = "Sử dụng refresh token để lấy access token mới")
+    @GeneralResponse
+    @PostMapping("/refresh-token")
+    public Response refreshToken(@RequestBody String refreshToken, HttpServletResponse response) throws Exception {
+        authService.refreshToken(refreshToken, response);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                 "Refresh token successfully",
                 null
         );
     }

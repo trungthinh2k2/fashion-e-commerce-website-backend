@@ -1,6 +1,5 @@
 package iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

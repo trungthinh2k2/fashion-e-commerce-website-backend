@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import iuh.fit.fashionecommercewebsitebackend.repositories.TokenRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,11 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
+
+    private final TokenRepository tokenRepository;
+
     @Override
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
@@ -42,6 +48,13 @@ public class JwtServiceImpl implements JwtService {
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractClaim(token, Claims::getSubject);
         return username.equals(userDetails.getUsername()) && expiredDateToken(token);
+    }
+
+    @Override
+    public boolean validateRefreshToken(String refreshToken, UserDetails userDetails) {
+        boolean existByRefreshToken = tokenRepository.existsByRefreshToken(refreshToken);
+        final String username = extractClaim(refreshToken, Claims::getSubject);
+        return username.equals(userDetails.getUsername()) && expiredDateToken(refreshToken) && existByRefreshToken;
     }
 
     private boolean expiredDateToken(String token) {

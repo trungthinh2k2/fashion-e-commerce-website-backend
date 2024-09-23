@@ -14,6 +14,7 @@ import iuh.fit.fashionecommercewebsitebackend.repositories.UserRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.EmailService;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.AuthService;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.JwtService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.TokenService;
 import iuh.fit.fashionecommercewebsitebackend.utils.EmailDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
+    private final TokenService tokenService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -88,8 +90,36 @@ public class AuthServiceImpl implements AuthService {
         token.setRefreshToken(refreshToken);
         token.setUser(user);
         token.setIssueDate(LocalDateTime.now());
+        tokenService.saveToken( user,token);
+
+        Cookie cookie = new Cookie("accessToken", accessToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(30 * 60); // 30 phút
+        response.addCookie(cookie);
+    }
+
+    @Override
+    public void refreshToken(String refreshToken, HttpServletResponse response) throws DataExistsException {
+        Token token = tokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new DataNotFoundException("Refresh token not found"));
+        String email = jwtService.extractEmail(refreshToken);
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new DataNotFoundException("User is not exists")
+        );
+        CustomUserDetails userDetail = new CustomUserDetails(user);
+        if (!jwtService.validateRefreshToken(refreshToken, userDetail)) {
+            tokenRepository.delete(token);
+            throw new DataNotFoundException("Refresh token is incorrect");
+        }
+
+        token.setRefreshToken(refreshToken);
+        token.setUser(user);
+        token.setIssueDate(LocalDateTime.now());
         tokenRepository.save(token);
 
+        String accessToken = jwtService.generateToken(userDetail);
         Cookie cookie = new Cookie("accessToken", accessToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
@@ -126,4 +156,5 @@ public class AuthServiceImpl implements AuthService {
         var value = 100000 + random.nextInt(900000);
         return String.valueOf(value);
     }
+
 }
