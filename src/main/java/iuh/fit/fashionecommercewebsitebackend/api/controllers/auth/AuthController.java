@@ -2,6 +2,7 @@ package iuh.fit.fashionecommercewebsitebackend.api.controllers.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.LoginRequestDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.ResetPasswordDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserRegisterDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.VerifyEmailDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
@@ -68,6 +69,42 @@ public class AuthController {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                  "Refresh token successfully",
+                null
+        );
+    }
+
+    @Operation(summary = "Gửi email xác thực", description = "Gửi email xác thực để đặt lại mật khẩu khi bị quên mật khẩu")
+    @GeneralResponse
+    @PostMapping("/send-verification-email")
+    public Response sendVerificationEmail(@RequestBody String email) throws Exception {
+        authService.forgotPassword(email);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Send verification email successfully",
+                "Check your email"
+        );
+    }
+
+    @Operation(summary = "Xác thực email để đặt lại mật khẩu", description = "Xác thực email để đặt lại mật khẩu khi bị quên mật khẩu")
+    @GeneralResponse
+    @PostMapping("/verify-email-otp-reset-password")
+    public Response verifyEmailOtpResetPassword(@RequestBody VerifyEmailDto verifyEmailDto) throws Exception {
+        authService.verifyEmailOTPResetPassword(verifyEmailDto);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Verify email OTP reset password successfully",
+                null
+        );
+    }
+
+    @Operation(summary = "Đặt lại mật khẩu", description = "Đặt lại mật khẩu khi bị quên mật khẩu")
+    @GeneralResponse
+    @PostMapping("/reset-password")
+    public Response resetPassword(@RequestBody ResetPasswordDto resetPasswordDto, HttpServletResponse response) throws Exception {
+        authService.resetPassword(resetPasswordDto, response);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Reset password successfully",
                 null
         );
     }

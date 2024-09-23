@@ -54,6 +54,10 @@ public class User extends BaseModel{
     @Column(name = "otp", length = 10)
     private String otp;
 
+    @JsonIgnore
+    @Column(name = "otp_reset", length = 10)
+    private String otpReset;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;

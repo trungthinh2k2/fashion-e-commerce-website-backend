@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "token-entity-graph",
+                attributeNodes = {
+                    @NamedAttributeNode("user")
+        })
+})
 public class Token {
 
     @Id
@@ -27,7 +33,7 @@ public class Token {
     @Column(name = "issue_date")
     private LocalDateTime issueDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
