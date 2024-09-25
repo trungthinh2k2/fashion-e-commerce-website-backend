@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,7 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.time.Duration;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -54,31 +62,65 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         author -> {
                             author.requestMatchers("/v3/api-docs/**",
                                     "/swagger-ui/**",
                                     "/swagger-ui.html").permitAll();
                             author.requestMatchers("/api/v1/auth/**").permitAll();
-                            author.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
-                            author.anyRequest().authenticated();
+                            author.requestMatchers(HttpMethod.GET,
+                                    "/api/v1/products/**",
+                                    "/api/v1/addresses/**",
+                                    "/api/v1/categories/**",
+                                    "/api/v1/product-details/**",
+                                    "/api/v1/providers/**",
+                                    "/api/v1/colors/**",
+                                    "/api/v1/sizes/**").permitAll();
+                            author.requestMatchers(
+                                    "/api/v1/users/**").authenticated();
+                            author.anyRequest().hasRole("ADMIN");
                         }
                 )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(
-                        exception -> exception.authenticationEntryPoint(authenticationEntryPoint()))
+                .exceptionHandling(exHandler -> exHandler
+                        .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
+                        .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
+                )
                 .build();
+    }
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Mã 403
+        };
     }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Mã 401
         };
     }
+
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setMaxAge(Duration.ofHours(1));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }

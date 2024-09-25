@@ -37,11 +37,11 @@ public class GlobalExceptionHandler extends Throwable {
         return new ApiError(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage()));
     }
 
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    @ExceptionHandler(ForbiddenException.class)
-//    public ApiError handleForbiddenException(ForbiddenException ex) {
-//        return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
-//    }
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiError handleForbiddenException(ForbiddenException ex) {
+        return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
+    }
 
 
 }

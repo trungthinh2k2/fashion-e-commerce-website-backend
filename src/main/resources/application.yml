@@ -64,6 +64,10 @@ api:
       summary: update
       description: |
         Cập nhật toàn bộ thông tin của dữ liệu theo object trong body request
+    options-update:
+      summary: update options
+      description: |
+        Cập nhật một hoặc nhiều thông tin của dữ liệu
     get-detail:
       summary: Get detailed information
       description: Lấy thông tin chi tiết của dữ liệu có id được gửi trong path parameter

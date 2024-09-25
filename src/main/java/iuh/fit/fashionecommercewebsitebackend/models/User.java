@@ -61,7 +61,10 @@ public class User extends BaseModel{
     @Column(name = "otp_reset", length = 10)
     private String otpReset;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "avatar_url", length = 1000)
+    private String avatarUrl;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
