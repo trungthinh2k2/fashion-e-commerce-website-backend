@@ -1,9 +1,10 @@
-package iuh.fit.fashionecommercewebsitebackend.services.impl;
+package iuh.fit.fashionecommercewebsitebackend.services.impl.products;
 
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.models.Size;
 import iuh.fit.fashionecommercewebsitebackend.repositories.SizeRepository;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.SizeService;
+import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;

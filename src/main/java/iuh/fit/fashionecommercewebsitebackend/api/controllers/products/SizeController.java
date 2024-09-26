@@ -11,7 +11,7 @@ import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.Size;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.SizeService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.SizeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

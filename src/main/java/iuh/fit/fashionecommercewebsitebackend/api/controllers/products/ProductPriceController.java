@@ -10,7 +10,7 @@ import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductPrice;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductPriceService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

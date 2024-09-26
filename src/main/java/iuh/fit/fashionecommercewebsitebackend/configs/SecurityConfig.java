@@ -77,9 +77,13 @@ public class SecurityConfig {
                                     "/api/v1/product-details/**",
                                     "/api/v1/providers/**",
                                     "/api/v1/colors/**",
-                                    "/api/v1/sizes/**").permitAll();
+                                    "/api/v1/sizes/**",
+                                    "/api/v1/vouchers/user/**"
+                                    ).permitAll();
                             author.requestMatchers(
-                                    "/api/v1/users/**").authenticated();
+                                    "/api/v1/users/**",
+                                    "/api/v1/orders/**"
+                                    ).authenticated();
                             author.anyRequest().hasRole("ADMIN");
                         }
                 )

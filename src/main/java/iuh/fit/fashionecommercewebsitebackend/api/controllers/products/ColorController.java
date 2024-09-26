@@ -12,7 +12,7 @@ import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.Color;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ColorService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ColorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

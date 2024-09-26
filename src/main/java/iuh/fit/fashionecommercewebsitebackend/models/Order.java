@@ -2,6 +2,7 @@ package iuh.fit.fashionecommercewebsitebackend.models;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.DeliveryMethod;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.OrderStatus;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.PaymentMethod;
 import jakarta.persistence.*;
@@ -54,6 +55,10 @@ public class Order extends BaseModel{
 
     @Column(name = "discount_price", columnDefinition = "decimal(10,2)")
     private Double discountPrice;
+
+    @Column(name = "delivery_method")
+    @Enumerated
+    private DeliveryMethod deliveryMethod;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

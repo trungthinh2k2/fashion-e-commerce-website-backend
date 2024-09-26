@@ -1,10 +1,11 @@
-package iuh.fit.fashionecommercewebsitebackend.services.impl;
+package iuh.fit.fashionecommercewebsitebackend.services.impl.products;
 
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductDetailService;
+import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductDetailService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -8,7 +8,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundExcepti
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.BrandMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.models.Brand;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BrandService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

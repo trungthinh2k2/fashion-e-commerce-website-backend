@@ -8,7 +8,7 @@ import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -7,7 +7,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.CategoryMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.models.Category;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.CategoryService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

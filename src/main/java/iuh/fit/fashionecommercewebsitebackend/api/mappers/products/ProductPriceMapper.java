@@ -4,7 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.Product
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductPrice;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

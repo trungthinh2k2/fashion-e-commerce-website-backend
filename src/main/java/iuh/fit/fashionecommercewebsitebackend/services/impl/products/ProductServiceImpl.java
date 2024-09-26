@@ -1,4 +1,4 @@
-package iuh.fit.fashionecommercewebsitebackend.services.impl;
+package iuh.fit.fashionecommercewebsitebackend.services.impl.products;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
@@ -14,7 +14,8 @@ import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailReposito
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductImageRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.customizations.ProductQuery;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
+import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
 import iuh.fit.fashionecommercewebsitebackend.utils.S3Upload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

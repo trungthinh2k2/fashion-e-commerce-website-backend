@@ -1,4 +1,4 @@
-package iuh.fit.fashionecommercewebsitebackend.services.interfaces;
+package iuh.fit.fashionecommercewebsitebackend.services.interfaces.products;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
@@ -6,6 +6,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ProductResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BaseService;
 
 import java.util.List;
 

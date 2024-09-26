@@ -8,7 +8,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProviderMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.models.Provider;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProviderService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProviderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

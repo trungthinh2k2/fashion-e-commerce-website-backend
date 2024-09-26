@@ -3,7 +3,7 @@ package iuh.fit.fashionecommercewebsitebackend.api.mappers.products;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ColorDto;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.models.Color;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ColorService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ColorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

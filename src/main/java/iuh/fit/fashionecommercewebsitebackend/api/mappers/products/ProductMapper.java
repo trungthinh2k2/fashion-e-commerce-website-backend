@@ -7,9 +7,9 @@ import iuh.fit.fashionecommercewebsitebackend.models.Category;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.Provider;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BrandService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.CategoryService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProviderService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.BrandService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.CategoryService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

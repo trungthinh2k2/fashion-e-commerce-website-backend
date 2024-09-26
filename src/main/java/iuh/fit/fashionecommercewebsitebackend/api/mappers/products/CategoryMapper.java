@@ -3,7 +3,7 @@ package iuh.fit.fashionecommercewebsitebackend.api.mappers.products;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.CategoryDto;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.models.Category;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.CategoryService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

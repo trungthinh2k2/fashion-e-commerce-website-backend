@@ -32,13 +32,11 @@ spring:
 aws-s3:
   region: ap-southeast-1
   bucket-name: fashion-e-commerce
-
 logging:
-    level:
-        org:
-#          springframework:
-#            web: Trace
-          security: Trace
+  level:
+    org:
+      springframework:
+        security: trace
 server:
   error:
     include-stacktrace: never

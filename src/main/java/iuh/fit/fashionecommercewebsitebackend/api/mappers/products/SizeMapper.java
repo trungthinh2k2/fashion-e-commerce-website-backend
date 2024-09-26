@@ -4,7 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.SizeDto
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.NullDataException;
 import iuh.fit.fashionecommercewebsitebackend.models.Size;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.SizeService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.SizeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

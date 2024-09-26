@@ -6,9 +6,9 @@ import iuh.fit.fashionecommercewebsitebackend.models.Color;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
 import iuh.fit.fashionecommercewebsitebackend.models.Size;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ColorService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.ProductService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.SizeService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ColorService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.SizeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
