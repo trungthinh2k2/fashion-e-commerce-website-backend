@@ -4,6 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.SizeDto
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.NullDataException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.SizeMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
@@ -58,7 +59,7 @@ public class SizeController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response deleteSize(@PathVariable Integer id) {
+    public Response deleteSize(@PathVariable Integer id) throws DataNotFoundException {
         sizeService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),

@@ -48,7 +48,7 @@ public class BaseServiceImpl<T, ID extends Serializable>
     }
 
     @Override
-    public T updatePatch(ID id, Map<String, ?> data) {
+    public T updatePatch(ID id, Map<String, ?> data) throws DataNotFoundException {
         T t = repository.findById(id).orElseThrow(()-> new DataNotFoundException("Not found"));
         Class<?> clazz = t.getClass();
         Set<String> keys = data.keySet();
@@ -77,7 +77,7 @@ public class BaseServiceImpl<T, ID extends Serializable>
     }
 
     @Override
-    public void deleteById(ID id) {
+    public void deleteById(ID id) throws DataNotFoundException {
         Optional<T> t = repository.findById(id);
         if (t.isEmpty()) {
             throw new DataNotFoundException( "Not found");

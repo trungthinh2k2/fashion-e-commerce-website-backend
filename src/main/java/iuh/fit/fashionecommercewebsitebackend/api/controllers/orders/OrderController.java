@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class OrderController {
 
     @CreateResponse
     @PostMapping
-    public Response createOrder(@RequestBody @Valid OrderDto orderDto) {
+    public Response createOrder(@RequestBody @Valid OrderDto orderDto) throws DataNotFoundException {
         System.out.println(orderDto.getEmail());
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),

@@ -21,7 +21,7 @@ public class ProductMapper {
     private final CategoryService categoryService;
     private final ProviderService providerService;
 
-    public Product productDtoToProduct(ProductDto productDto) {
+    public Product productDtoToProduct(ProductDto productDto) throws DataNotFoundException {
 
         Brand brand = brandService.findById(productDto.getBrandId())
                 .orElseThrow(() -> new DataNotFoundException("Brand not found"));

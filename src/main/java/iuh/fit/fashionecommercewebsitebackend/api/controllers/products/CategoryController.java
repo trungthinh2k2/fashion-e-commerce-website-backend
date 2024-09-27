@@ -4,6 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.Categor
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.CategoryMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.models.Category;
@@ -66,7 +67,7 @@ public class CategoryController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response delete(@PathVariable int id) {
+    public Response delete(@PathVariable int id) throws DataNotFoundException {
         categoryService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),

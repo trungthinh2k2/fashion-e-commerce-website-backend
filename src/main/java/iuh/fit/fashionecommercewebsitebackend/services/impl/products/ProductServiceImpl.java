@@ -74,9 +74,9 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
     @Override
-    public Product save(ProductDto productDto) throws DataExistsException {
+    public Product save(ProductDto productDto) throws DataExistsException, DataNotFoundException {
         if (productRepository.existsByProductName(productDto.getProductName())) {
-            throw new DataNotFoundException("Product already exists");
+            throw new DataExistsException("Product already exists");
         }
 
         String id = "Pro" + LocalDate.now().format(DateTimeFormatter.ofPattern("-ddMMyyyy-")) + UUID.randomUUID().toString().substring(0, 8);
@@ -92,8 +92,9 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
     @Override
-    public void deactivateProduct(String id) {
-        Product product = super.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"));
+    public void deactivateProduct(String id) throws DataNotFoundException {
+        Product product = super.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Product not found"));
         product.setProductStatus(Status.INACTIVE);
         super.save(product);
     }
@@ -104,8 +105,9 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
     @Override
-    public ProductResponse findProductById(String id) {
-        Product product = super.findById(id).orElseThrow(() -> new DataNotFoundException("Product not found"));
+    public ProductResponse findProductById(String id) throws DataNotFoundException {
+        Product product = super.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Product not found"));
         List<ProductImage> productImages = productImageRepository.findByProductId(id);
         List<ProductDetail> productDetails = productDetailRepository.findByProductId(id);
         return ProductResponse.builder()

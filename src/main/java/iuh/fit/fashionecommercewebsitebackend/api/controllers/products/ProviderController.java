@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProviderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProviderMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.models.Provider;
@@ -27,7 +28,7 @@ public class ProviderController {
 
     @CreateResponse
     @PostMapping
-    public Response create(@Valid @RequestBody ProviderDto providerDto) {
+    public Response create(@Valid @RequestBody ProviderDto providerDto) throws DataNotFoundException {
         Provider provider = providerMapper.providerDtoToProvider(providerDto);
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
@@ -58,7 +59,7 @@ public class ProviderController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response deleteProvider(@PathVariable Integer id) {
+    public Response deleteProvider(@PathVariable Integer id) throws DataNotFoundException {
         providerService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
@@ -68,7 +69,7 @@ public class ProviderController {
 
     @FullUpdateResponse
     @PutMapping("/{id}")
-    public Response updateProvider(@PathVariable int id, @Valid @RequestBody ProviderDto providerDto) {
+    public Response updateProvider(@PathVariable int id, @Valid @RequestBody ProviderDto providerDto) throws DataNotFoundException {
         Provider provider = providerMapper.providerDtoToProvider(providerDto);
         provider.setId(id);
         return new ResponseSuccess<>(
@@ -79,7 +80,7 @@ public class ProviderController {
     }
 
     @PatchMapping("/{id}")
-    public Response updateProviderPartially(@PathVariable int id, @RequestBody Map<String, ?> data) {
+    public Response updateProviderPartially(@PathVariable int id, @RequestBody Map<String, ?> data) throws DataNotFoundException {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Provider updated patch successfully",

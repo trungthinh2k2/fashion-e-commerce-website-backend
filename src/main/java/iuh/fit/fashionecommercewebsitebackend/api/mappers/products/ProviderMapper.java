@@ -14,10 +14,10 @@ public class ProviderMapper {
 
     private final AddressService addressService;
 
-    public Provider providerDtoToProvider(ProviderDto providerDto) {
+    public Provider providerDtoToProvider(ProviderDto providerDto) throws DataNotFoundException {
 
         Address address = addressService.findById(providerDto.getAddressId())
-                .orElseThrow(() -> new DataNotFoundException("Brand not found"));
+                .orElseThrow(() -> new DataNotFoundException("Address not found"));
 
         return Provider.builder()
                 .providerName(providerDto.getProviderName())

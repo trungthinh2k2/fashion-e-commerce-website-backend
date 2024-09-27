@@ -7,6 +7,9 @@ import iuh.fit.fashionecommercewebsitebackend.api.mappers.AddressMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.*;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.DeliveryMethod;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.OrderStatus;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.Scope;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.VoucherType;
+import iuh.fit.fashionecommercewebsitebackend.models.ids.UserVoucherId;
 import iuh.fit.fashionecommercewebsitebackend.repositories.*;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,6 +28,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
     private UserRepository userRepository;
     private AddressMapper addressMapper;
+    private VoucherRepository voucherRepository;
+    private UserVoucherRepository userVoucherRepository;
     private ProductDetailRepository productDetailRepository;
     private ProductRepository productRepository;
     private ProductPriceRepository productPriceRepository;
@@ -42,6 +48,16 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     @Autowired
     public void setAddressMapper(AddressMapper addressMapper) {
         this.addressMapper = addressMapper;
+    }
+
+    @Autowired
+    public void setVoucherRepository(VoucherRepository voucherRepository) {
+        this.voucherRepository = voucherRepository;
+    }
+
+    @Autowired
+    public void setUserVoucherRepository(UserVoucherRepository userVoucherRepository) {
+        this.userVoucherRepository = userVoucherRepository;
     }
 
     @Autowired
@@ -65,8 +81,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     }
 
     @Override
-    @Transactional(rollbackFor = {DataNotFoundException.class})
-    public Order save(OrderDto orderDto) {
+    @Transactional(rollbackFor = {Exception.class})
+    public Order save(OrderDto orderDto) throws DataNotFoundException {
 
         List<ProductsOrderDto> productsOrderDtos = orderDto.getProductsOrderDtos();
 
@@ -92,6 +108,54 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         order = super.save(order);
 
         originalAmount = handleAmount(productsOrderDtos, order,originalAmount);  // tien goc hoa don
+        List<Long> vouchers = orderDto.getVouchers();
+        if (vouchers != null) {
+            for (Long voucherId : vouchers) {
+                Voucher voucher = voucherRepository.findById(voucherId)
+                        .orElseThrow(() -> new DataNotFoundException("Voucher not found"));
+                UserVoucherId userVoucherId = new UserVoucherId(user, voucher);
+                if (voucher.getScope().equals(Scope.FOR_USER)) {
+                    UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId)
+                            .orElseThrow(() -> new DataNotFoundException("UserVoucher not found"));
+                    if (!userVoucher.getIsUsed()) {
+                        double discountPrice = addVoucherDelivery(originalAmount, voucher);
+                        if(discountPrice > 0) {
+                            userVoucher.setIsUsed(true);
+                        }
+                        if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
+                            order.setDeliveryFee(order.getDeliveryFee() - discountPrice);
+                        }
+                        else {
+                            order.setDiscountAmount(
+                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountPrice
+                            );
+                        }
+                        userVoucherRepository.save(userVoucher);
+                    }
+                } else  {
+                    UserVoucherId userVoucherId1 = new UserVoucherId(user, voucher);
+                    UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId1)
+                            .orElseThrow(() -> new DataNotFoundException("UserVoucher not found"));
+                    if (!userVoucher.getIsUsed()) {
+                        double discountPrice = addVoucherDelivery(originalAmount, voucher);
+                        if (discountPrice > 0) {
+                            userVoucher.setIsUsed(true);
+                        }
+                        if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
+                            order.setDeliveryFee(order.getDeliveryFee() - discountPrice);
+                        } else {
+                            order.setDiscountAmount(
+                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountPrice
+                            );
+                        }
+                        userVoucherRepository.save(userVoucher);
+                    }
+                }
+            }
+
+        }
+
+
         order.setOriginalAmount(originalAmount);
         order.setDiscountPrice(
                 (originalAmount + order.getDeliveryFee()) - (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount())
@@ -100,7 +164,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         return super.save(order);
     }
 
-    private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount) {
+    private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount) throws DataNotFoundException {
         for (ProductsOrderDto productsOrderDto : productsOrderDtos) {
             ProductDetail productDetail = productDetailRepository.findById(productsOrderDto.getProductDetailId())
                     .orElseThrow(() -> new DataNotFoundException("Product detail not found"));
@@ -143,4 +207,37 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         return originalAmount;
     }
 
+//    private void usedVoucher(double originalAmount, Order order, Voucher voucher, UserVoucherId userVoucherId) {
+//        UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId)
+//                .orElseThrow(() -> new DataNotFoundException("User voucher not found"));
+//        if (!userVoucher.getIsUsed()) {
+//            double discountedAmount = addVoucherDelivery(originalAmount, voucher);
+//            if (discountedAmount > 0) {
+//                userVoucher.setIsUsed(true);
+//            }
+//            if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
+//                order.setDeliveryFee(order.getDeliveryFee() - discountedAmount);
+//            }
+//            else {
+//                order.setDiscountAmount(
+//                        (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountedAmount
+//                );
+//            }
+//            userVoucherRepository.save(userVoucher);
+//        }
+//    }
+
+    private double addVoucherDelivery(double originalAmount, Voucher voucher) {
+        System.out.println(voucher.getExpiredDate());
+        System.out.println(originalAmount);
+        if (voucher.getExpiredDate().isAfter(LocalDateTime.now()) && originalAmount >= voucher.getMinOrderAmount()) {
+            double discountedAmount = originalAmount * voucher.getDiscount()/100;
+            if ((discountedAmount >= voucher.getMaxDiscountAmount())) {
+                return voucher.getMaxDiscountAmount();
+            } else {
+                return discountedAmount;
+            }
+        }
+        return 0;
+    }
 }

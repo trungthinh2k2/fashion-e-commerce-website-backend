@@ -4,6 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.Product
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
@@ -26,7 +27,7 @@ public class ProductController {
 
     @CreateResponse
     @PostMapping
-    public Response create(@ModelAttribute @Valid ProductDto productDto) throws DataExistsException {
+    public Response create(@ModelAttribute @Valid ProductDto productDto) throws Exception {
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Product created successfully",
@@ -46,7 +47,7 @@ public class ProductController {
 
     @FindResponse
     @GetMapping("/{id}")
-    public Response getById(@PathVariable String id){
+    public Response getById(@PathVariable String id) throws DataNotFoundException {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Get product by id successfully",
@@ -74,7 +75,7 @@ public class ProductController {
     }
 
     @PutMapping("/delete/{id}")
-    public Response deactivateProduct(@PathVariable String id) throws DataExistsException {
+    public Response deactivateProduct(@PathVariable String id) throws DataExistsException, DataNotFoundException {
         productService.deactivateProduct(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
@@ -84,7 +85,7 @@ public class ProductController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Response patchProduct(@PathVariable String id, @RequestParam Map<String, ?> data) {
+    public Response patchProduct(@PathVariable String id, @RequestParam Map<String, ?> data) throws DataNotFoundException {
         return new ResponseSuccess<>(HttpStatus.OK.value(),
                 "Product patched successfully",
                 productService.updatePatch(id, data));

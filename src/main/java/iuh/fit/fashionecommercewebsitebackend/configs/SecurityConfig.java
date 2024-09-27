@@ -35,6 +35,8 @@ public class SecurityConfig {
 
     private final UserDetailService userDetailService;
     private final Filter filter;
+    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -93,10 +95,11 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exHandler -> exHandler
-                        .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
-                        .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
-                )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint))
+//                .exceptionHandling(exHandler -> exHandler
+//                        .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
+//                        .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
+//                )
                 .build();
     }
     @Bean

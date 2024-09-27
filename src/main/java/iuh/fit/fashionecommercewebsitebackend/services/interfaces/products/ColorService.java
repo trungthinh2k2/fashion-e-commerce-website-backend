@@ -5,5 +5,5 @@ import iuh.fit.fashionecommercewebsitebackend.models.Color;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BaseService;
 
 public interface ColorService extends BaseService<Color, Integer> {
-    Color checkExistsColorName(String colorName) throws DataExistsException;
+    void checkExistsColorName(String colorName) throws DataExistsException;
 }

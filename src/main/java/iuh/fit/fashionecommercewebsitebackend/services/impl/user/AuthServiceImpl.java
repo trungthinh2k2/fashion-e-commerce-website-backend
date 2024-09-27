@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) throws DataNotFoundException {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
         User user = userRepository.findByEmail(email)
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void refreshToken(String refreshToken, HttpServletResponse response) {
+    public void refreshToken(String refreshToken, HttpServletResponse response) throws DataNotFoundException {
         Token token = tokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new DataNotFoundException("Refresh token not found"));
         String email = jwtService.extractEmail(refreshToken);
@@ -145,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void verifyEmailOTPResetPassword(VerifyEmailDto verifyEmailDto) {
+    public void verifyEmailOTPResetPassword(VerifyEmailDto verifyEmailDto) throws DataNotFoundException {
         String email = verifyEmailDto.getEmail();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("Email not found"));

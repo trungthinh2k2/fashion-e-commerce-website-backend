@@ -40,7 +40,7 @@ public class ProductPriceController {
 
     @FullUpdateResponse
     @PutMapping("/{id}")
-    public Response updateProductPrice(@PathVariable int id, @Valid @RequestBody ProductPriceDto productPriceDto) throws DataExistsException {
+    public Response updateProductPrice(@PathVariable int id, @Valid @RequestBody ProductPriceDto productPriceDto) throws DataNotFoundException {
         ProductPrice productPrice = productPriceMapper.productPriceDto2ProductPrice(productPriceDto);
         productPrice.setId(id);
         return new ResponseSuccess<>(
@@ -52,7 +52,7 @@ public class ProductPriceController {
 
     @FindResponse
     @GetMapping("/{id}")
-    public Response getProductPriceById(@PathVariable int id) {
+    public Response getProductPriceById(@PathVariable int id) throws DataNotFoundException {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Get product price by id successfully",

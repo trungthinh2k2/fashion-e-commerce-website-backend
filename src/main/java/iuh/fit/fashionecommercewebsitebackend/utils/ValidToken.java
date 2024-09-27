@@ -15,7 +15,7 @@ public class ValidToken {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public void validToken(Long id, HttpServletRequest request) {
+    public void validToken(Long id, HttpServletRequest request) throws DataNotFoundException {
         String token = request.getHeader("Authorization").substring(7);
         User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Invalid token"));
         if(!user.getEmail().equals(jwtService.extractEmail(token))) {
@@ -23,7 +23,7 @@ public class ValidToken {
         }
     }
 
-    public void validToken(String email, HttpServletRequest request) {
+    public void validToken(String email, HttpServletRequest request) throws DataNotFoundException {
         String token = request.getHeader("Authorization").substring(7);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("Invalid token"));
         if(!user.getEmail().equals(jwtService.extractEmail(token))) {

@@ -6,6 +6,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ColorDt
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ColorMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
@@ -60,7 +61,7 @@ public class ColorController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response deleteColor(@PathVariable Integer id) {
+    public Response deleteColor(@PathVariable Integer id) throws DataNotFoundException {
         colorService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),

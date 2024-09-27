@@ -31,12 +31,12 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(String email) throws DataNotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
     @Override
-    public User updateUser(String email, UserUpdateDto userUpdateDto) {
+    public User updateUser(String email, UserUpdateDto userUpdateDto) throws DataNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         user.setUsername(userUpdateDto.getUsername());
@@ -48,7 +48,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     }
 
     @Override
-    public User updateAvatar(String email, String avatarUrl) {
+    public User updateAvatar(String email, String avatarUrl) throws DataNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         user.setAvatarUrl(avatarUrl);

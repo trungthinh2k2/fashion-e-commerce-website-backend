@@ -1,7 +1,10 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.products;
 
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.models.Color;
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
+import iuh.fit.fashionecommercewebsitebackend.models.Size;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
@@ -56,5 +59,11 @@ public class ProductDetailServiceImpl extends BaseServiceImpl<ProductDetail, Str
         productRepository.save(product);
 
         return super.save(productDetail);
+    }
+
+    @Override
+    public void checkExist(Product product, Color color, Size size) throws DataExistsException {
+        if(productDetailRepository.existsByProductAndColorAndSize(product, color, size))
+            throw new DataExistsException("Product detail already exists");
     }
 }

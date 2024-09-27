@@ -24,10 +24,9 @@ public class ColorServiceImpl extends BaseServiceImpl<Color, Integer> implements
     }
 
         @Override
-    public Color checkExistsColorName(String colorName) throws DataExistsException {
+    public void checkExistsColorName(String colorName) throws DataExistsException {
         if (colorRepository.existsByColorName(colorName)) {
             throw new DataExistsException("Color name already exists");
         }
-            return null;
         }
 }

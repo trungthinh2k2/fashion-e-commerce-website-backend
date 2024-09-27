@@ -24,7 +24,6 @@ public class GlobalExceptionHandler extends Throwable {
         });
         return new ApiError(HttpStatus.BAD_REQUEST.value(), errors);
     }
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DataNotFoundException.class)
     public ApiError handleDataNotFoundException(DataNotFoundException ex) {
@@ -42,6 +41,7 @@ public class GlobalExceptionHandler extends Throwable {
     public ApiError handleForbiddenException(ForbiddenException ex) {
         return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
     }
+
 
 
 }

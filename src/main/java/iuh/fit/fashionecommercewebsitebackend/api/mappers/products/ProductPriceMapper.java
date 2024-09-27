@@ -14,7 +14,7 @@ public class ProductPriceMapper {
 
     private final ProductService productService;
 
-    public ProductPrice productPriceDto2ProductPrice(ProductPriceDto productPriceDto) {
+    public ProductPrice productPriceDto2ProductPrice(ProductPriceDto productPriceDto) throws DataNotFoundException {
 
         Product product = productService.findById(productPriceDto.getProductId())
                 .orElseThrow(()-> new DataNotFoundException("Product not found"));

@@ -6,8 +6,11 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.Product
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.UpdateProductDetailDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProductDetailMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.UpdateOptionsResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductDetailService;
 import jakarta.validation.Valid;
@@ -25,7 +28,7 @@ public class ProductDetailController {
 
     @CreateResponse
     @PostMapping
-    public Response createProductDetail(@RequestBody @Valid ProductDetailDto productDetailDto) {
+    public Response createProductDetail(@RequestBody @Valid ProductDetailDto productDetailDto) throws DataNotFoundException, DataExistsException {
         ProductDetail productDetail = productDetailMapper.productDetailDtoToProductDetail(productDetailDto);
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
@@ -34,8 +37,9 @@ public class ProductDetailController {
         );
     }
 
+    @UpdateOptionsResponse
     @PatchMapping("/{id}")
-    public ResponseSuccess<?> updatePatchProductDetail(@PathVariable String id,@RequestBody @Valid UpdateProductDetailDto updateProductDetailDto) {
+    public Response updatePatchProductDetail(@PathVariable String id,@RequestBody @Valid UpdateProductDetailDto updateProductDetailDto) throws Exception {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Product detail updated successfully",

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.VoucherDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.orders.VoucherMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
@@ -52,7 +53,7 @@ public class VoucherController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response delete(@PathVariable Long id) {
+    public Response delete(@PathVariable Long id) throws DataNotFoundException {
         voucherService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
@@ -62,7 +63,7 @@ public class VoucherController {
     }
 
     @PatchMapping("/{id}")
-    public Response updatePatch(@PathVariable Long id, @RequestBody Map<String, ?> data) {
+    public Response updatePatch(@PathVariable Long id, @RequestBody Map<String, ?> data) throws DataNotFoundException {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Voucher updated patch successfully",

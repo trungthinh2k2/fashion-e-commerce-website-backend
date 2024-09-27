@@ -45,7 +45,7 @@ public class BrandController {
 
     @FindResponse
     @GetMapping("/{id}")
-    public Response getBrandById(@PathVariable int id) {
+    public Response getBrandById(@PathVariable int id) throws DataNotFoundException {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "Get brands successfully",
@@ -67,7 +67,7 @@ public class BrandController {
 
     @DeleteResponse
     @DeleteMapping("/{id}")
-    public Response deleteBrand(@PathVariable int id) {
+    public Response deleteBrand(@PathVariable int id) throws DataNotFoundException {
         brandService.deleteById(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
