@@ -7,4 +7,5 @@ import iuh.fit.fashionecommercewebsitebackend.services.interfaces.BaseService;
 
 public interface OrderService extends BaseService<Order, String> {
     Order save(OrderDto orderDto) throws Exception;
+    Order updateStatus(String id) throws DataNotFoundException;
 }

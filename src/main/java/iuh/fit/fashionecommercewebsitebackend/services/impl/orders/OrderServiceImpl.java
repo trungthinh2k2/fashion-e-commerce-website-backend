@@ -13,12 +13,15 @@ import iuh.fit.fashionecommercewebsitebackend.models.ids.UserVoucherId;
 import iuh.fit.fashionecommercewebsitebackend.repositories.*;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +37,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     private ProductRepository productRepository;
     private ProductPriceRepository productPriceRepository;
     private OrderDetailRepository orderDetailRepository;
+    private OrderRepository orderRepository;
 
 
     public OrderServiceImpl(JpaRepository<Order, String> repository) {
@@ -80,6 +84,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         this.orderDetailRepository = orderDetailRepository;
     }
 
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public Order save(OrderDto orderDto) throws Exception {
@@ -90,9 +99,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
         double originalAmount = 0;
+        String id = "ORD" + LocalDate.now().format(DateTimeFormatter.ofPattern("-ddMMyyyy-")) + UUID.randomUUID().toString().substring(0, 8);
 
         Order order = Order.builder()
-                .id(UUID.randomUUID().toString())
+                .id(id)
                 .orderDate(LocalDateTime.now())
                 .status(OrderStatus.PENDING)
                 .paymentMethod(orderDto.getPaymentMethod())
@@ -193,6 +203,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         );
 
         return super.save(order);
+    }
+
+    @Override
+    public Order updateStatus(String id) throws DataNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        if (order.getStatus().equals(OrderStatus.CANCELLED)) {
+            throw new DataNotFoundException("Order has been cancelled");
+        }
+        if (order.getStatus().equals(OrderStatus.PENDING)) {
+            order.setStatus(OrderStatus.CANCELLED);
+        }
+        else
+            throw new DataNotFoundException("Order can not be cancelled");
+        return orderRepository.save(order);
     }
 
     private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount) throws DataNotFoundException {

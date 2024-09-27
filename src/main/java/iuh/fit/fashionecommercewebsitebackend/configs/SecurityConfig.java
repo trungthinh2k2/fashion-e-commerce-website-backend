@@ -82,7 +82,7 @@ public class SecurityConfig {
                                     "/api/v1/sizes/**",
                                     "/api/v1/vouchers/user/**"
                                     ).permitAll();
-                            author.requestMatchers(HttpMethod.POST, "/api/v1/orders/**").hasRole("USER");
+                            author.requestMatchers("/api/v1/orders/user/**").hasRole("USER");
                             author.requestMatchers(
                                     "/api/v1/users/**"
                                     ).authenticated();
