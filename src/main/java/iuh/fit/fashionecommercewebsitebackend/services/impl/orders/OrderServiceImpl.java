@@ -82,7 +82,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
-    public Order save(OrderDto orderDto) throws DataNotFoundException {
+    public Order save(OrderDto orderDto) throws Exception {
 
         List<ProductsOrderDto> productsOrderDtos = orderDto.getProductsOrderDtos();
 
@@ -108,53 +108,84 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         order = super.save(order);
 
         originalAmount = handleAmount(productsOrderDtos, order,originalAmount);  // tien goc hoa don
+
         List<Long> vouchers = orderDto.getVouchers();
         if (vouchers != null) {
+            if (vouchers.size() > 2) {
+                throw new Exception("Maximum 2 vouchers");
+            }
+            boolean hasProductVoucher = false;
+            boolean hasDeliveryVoucher = false;
             for (Long voucherId : vouchers) {
                 Voucher voucher = voucherRepository.findById(voucherId)
                         .orElseThrow(() -> new DataNotFoundException("Voucher not found"));
                 UserVoucherId userVoucherId = new UserVoucherId(user, voucher);
+
+                if (voucher.getVoucherType().equals(VoucherType.FOR_PRODUCT)) {
+                    if (hasProductVoucher) {
+                        throw new Exception("Only one FOR_PRODUCT voucher is allowed");
+                    }
+                    hasProductVoucher = true;
+                } else if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
+                    if (hasDeliveryVoucher) {
+                        throw new Exception("Only one FOR_DELIVERY voucher is allowed");
+                    }
+                    hasDeliveryVoucher = true;
+                }
+
                 if (voucher.getScope().equals(Scope.FOR_USER)) {
                     UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId)
                             .orElseThrow(() -> new DataNotFoundException("UserVoucher not found"));
                     if (!userVoucher.getIsUsed()) {
-                        double discountPrice = addVoucherDelivery(originalAmount, voucher);
-                        if(discountPrice > 0) {
-                            userVoucher.setIsUsed(true);
-                        }
                         if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
-                            order.setDeliveryFee(order.getDeliveryFee() - discountPrice);
-                        }
-                        else {
+                            double discountFee = addVoucherDelivery( order.getDeliveryFee(), voucher, originalAmount);
+                            order.setDeliveryFee(order.getDeliveryFee() - discountFee);
+                            order.setDiscountAmount(order.getDiscountAmount() == null ? discountFee : order.getDiscountAmount() + discountFee);
+                            if (discountFee > 0) {
+                                userVoucher.setIsUsed(true);
+                            }
+                        } else {
+                            double discountOrder = addVoucherOrder(originalAmount, voucher);
                             order.setDiscountAmount(
-                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountPrice
+                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountOrder
                             );
+                            if (discountOrder > 0) {
+                                userVoucher.setIsUsed(true);
+                            }
                         }
                         userVoucherRepository.save(userVoucher);
+                        int quantityStock = voucher.getQuantity() - 1;
+                        voucher.setQuantity(quantityStock);
+                        voucherRepository.save(voucher);
                     }
                 } else  {
                     UserVoucherId userVoucherId1 = new UserVoucherId(user, voucher);
-                    UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId1)
-                            .orElseThrow(() -> new DataNotFoundException("UserVoucher not found"));
-                    if (!userVoucher.getIsUsed()) {
-                        double discountPrice = addVoucherDelivery(originalAmount, voucher);
-                        if (discountPrice > 0) {
-                            userVoucher.setIsUsed(true);
-                        }
+                    Optional<UserVoucher> userVoucher = userVoucherRepository.findById(userVoucherId1);
+                    if (userVoucher.isEmpty()) {
                         if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
-                            order.setDeliveryFee(order.getDeliveryFee() - discountPrice);
+                            double discountFee = addVoucherDelivery( order.getDeliveryFee(), voucher, originalAmount);
+                            order.setDeliveryFee(order.getDeliveryFee() - discountFee);
+                            order.setDiscountAmount(order.getDiscountAmount() == null ? discountFee : order.getDiscountAmount() + discountFee);
                         } else {
+                            double discountOrder = addVoucherOrder(originalAmount, voucher);
                             order.setDiscountAmount(
-                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountPrice
+                                    (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountOrder
                             );
                         }
-                        userVoucherRepository.save(userVoucher);
+                            UserVoucher voucherUsages = new UserVoucher();
+                            voucherUsages.setVoucher(voucher);
+                            voucherUsages.setUser(user);
+                            voucherUsages.setIsUsed(true);
+                            userVoucherRepository.save(voucherUsages);
+
+                            int quantityStock = voucher.getQuantity() - 1;
+                            voucher.setQuantity(quantityStock);
+                            voucherRepository.save(voucher);
                     }
+
                 }
             }
-
         }
-
 
         order.setOriginalAmount(originalAmount);
         order.setDiscountPrice(
@@ -207,29 +238,18 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         return originalAmount;
     }
 
-//    private void usedVoucher(double originalAmount, Order order, Voucher voucher, UserVoucherId userVoucherId) {
-//        UserVoucher userVoucher = userVoucherRepository.findById(userVoucherId)
-//                .orElseThrow(() -> new DataNotFoundException("User voucher not found"));
-//        if (!userVoucher.getIsUsed()) {
-//            double discountedAmount = addVoucherDelivery(originalAmount, voucher);
-//            if (discountedAmount > 0) {
-//                userVoucher.setIsUsed(true);
-//            }
-//            if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
-//                order.setDeliveryFee(order.getDeliveryFee() - discountedAmount);
-//            }
-//            else {
-//                order.setDiscountAmount(
-//                        (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountedAmount
-//                );
-//            }
-//            userVoucherRepository.save(userVoucher);
-//        }
-//    }
-
-    private double addVoucherDelivery(double originalAmount, Voucher voucher) {
-        System.out.println(voucher.getExpiredDate());
-        System.out.println(originalAmount);
+    private double addVoucherDelivery(double discount, Voucher voucher, double originalAmount) {
+        if (voucher.getExpiredDate().isAfter(LocalDateTime.now()) && originalAmount >= voucher.getMinOrderAmount()) {
+            double discountF = discount * voucher.getDiscount()/100;
+            if ((discountF >= voucher.getMaxDiscountAmount())) {
+                return voucher.getMaxDiscountAmount();
+            } else {
+                return discountF;
+            }
+        }
+        return 0;
+    }
+    private double addVoucherOrder(double originalAmount, Voucher voucher) {
         if (voucher.getExpiredDate().isAfter(LocalDateTime.now()) && originalAmount >= voucher.getMinOrderAmount()) {
             double discountedAmount = originalAmount * voucher.getDiscount()/100;
             if ((discountedAmount >= voucher.getMaxDiscountAmount())) {

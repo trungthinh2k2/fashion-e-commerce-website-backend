@@ -26,7 +26,7 @@ public class OrderController {
 
     @CreateResponse
     @PostMapping
-    public Response createOrder(@RequestBody @Valid OrderDto orderDto) throws DataNotFoundException {
+    public Response createOrder(@RequestBody @Valid OrderDto orderDto) throws Exception {
         System.out.println(orderDto.getEmail());
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),

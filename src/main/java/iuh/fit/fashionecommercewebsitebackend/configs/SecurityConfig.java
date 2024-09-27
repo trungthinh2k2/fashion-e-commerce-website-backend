@@ -82,9 +82,9 @@ public class SecurityConfig {
                                     "/api/v1/sizes/**",
                                     "/api/v1/vouchers/user/**"
                                     ).permitAll();
+                            author.requestMatchers(HttpMethod.POST, "/api/v1/orders/**").hasRole("USER");
                             author.requestMatchers(
-                                    "/api/v1/users/**",
-                                    "/api/v1/orders/**"
+                                    "/api/v1/users/**"
                                     ).authenticated();
                             author.anyRequest().hasRole("ADMIN");
                         }
@@ -95,11 +95,11 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint))
-//                .exceptionHandling(exHandler -> exHandler
-//                        .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
-//                        .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
-//                )
+//                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint))
+                .exceptionHandling(exHandler -> exHandler
+                        .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
+                        .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
+                )
                 .build();
     }
     @Bean
