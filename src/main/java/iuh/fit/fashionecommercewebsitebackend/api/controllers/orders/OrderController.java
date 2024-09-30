@@ -44,4 +44,14 @@ public class OrderController {
                 orderService.updateStatus(id)
         );
     }
+
+    @Operation(summary = "Get all orders", description = "Get all orders by username(email)")
+    @GetMapping("/user/{email}")
+    public Response getAll(@PathVariable String email) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all orders successfully",
+                orderService.getAllOrdersByEmail(email)
+        );
+    }
 }

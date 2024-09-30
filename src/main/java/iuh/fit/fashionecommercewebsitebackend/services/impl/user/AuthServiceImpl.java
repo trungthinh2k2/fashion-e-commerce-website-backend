@@ -93,11 +93,19 @@ public class AuthServiceImpl implements AuthService {
         tokenService.saveToken( user,token);
 
         Cookie cookie = new Cookie("accessToken", accessToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(30 * 60); // 30 phút
+
+        Cookie cookieRefresh = new Cookie("refreshToken", refreshToken);
+//        cookieRefresh.setHttpOnly(true);
+//        cookieRefresh.setSecure(false);
+        cookieRefresh.setPath("/");
+        cookieRefresh.setMaxAge(30 * 60); // 30 phút
+
         response.addCookie(cookie);
+        response.addCookie(cookieRefresh);
     }
 
     @Override

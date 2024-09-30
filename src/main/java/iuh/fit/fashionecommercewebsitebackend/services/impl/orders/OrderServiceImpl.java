@@ -209,16 +209,28 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     public Order updateStatus(String id) throws DataNotFoundException {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        LocalDateTime now = LocalDateTime.now();
         if (order.getStatus().equals(OrderStatus.CANCELLED)) {
             throw new DataNotFoundException("Order has been cancelled");
         }
-        if (order.getStatus().equals(OrderStatus.PENDING)) {
+        if (order.getStatus().equals(OrderStatus.PENDING) && order.getOrderDate().plusHours(2).isAfter(now)) {
             order.setStatus(OrderStatus.CANCELLED);
         }
         else
             throw new DataNotFoundException("Order can not be cancelled");
         return orderRepository.save(order);
     }
+
+    @Override
+    public List<Order> getAllOrdersByEmail(String email) {
+        return orderRepository.findAllByUserEmail(email);
+    }
+
+    @Override
+    public List<OrderDetail> getOrderDetailsByOrderId(String orderId) {
+        return orderDetailRepository.findByOrderId(orderId);
+    }
+
 
     private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount) throws DataNotFoundException {
         for (ProductsOrderDto productsOrderDto : productsOrderDtos) {
