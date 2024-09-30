@@ -1,5 +1,6 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.products;
 
+import io.swagger.v3.oas.annotations.Operation;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -8,6 +9,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundExcepti
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.UpdateOptionsResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
 import jakarta.validation.Valid;
@@ -37,6 +39,7 @@ public class ProductController {
 
     @FindAllResponse
     @GetMapping
+    @Operation(summary = "Get all products", description = "Get all products include active and inactive products for admin")
     public Response getAll() {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
@@ -57,6 +60,7 @@ public class ProductController {
 
     @FindAllResponse
     @GetMapping("/active")
+    @Operation(summary = "Get all products by status ACTIVE", description = "Get all products by status ACTIVE for user")
     public Response getAllProductByStatus() {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
@@ -75,6 +79,7 @@ public class ProductController {
     }
 
     @PutMapping("/delete/{id}")
+    @Operation(summary = "Deactivate product", description = "Deactivate product by id")
     public Response deactivateProduct(@PathVariable String id) throws DataExistsException, DataNotFoundException {
         productService.deactivateProduct(id);
         return new ResponseSuccess<>(
@@ -84,6 +89,7 @@ public class ProductController {
         );
     }
 
+    @UpdateOptionsResponse
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Response patchProduct(@PathVariable String id, @RequestParam Map<String, ?> data) throws DataNotFoundException {
         return new ResponseSuccess<>(HttpStatus.OK.value(),
@@ -91,16 +97,17 @@ public class ProductController {
                 productService.updatePatch(id, data));
     }
 
-    @GetMapping("/discount")
-    public Response getProductsDiscount() {
-        return new ResponseSuccess<>(
-                HttpStatus.OK.value(),
-                "Get all products discount successfully",
-                productService.findProductsDiscount()
-        );
-    }
+//    @GetMapping("/discount")
+//    public Response getProductsDiscount() {
+//        return new ResponseSuccess<>(
+//                HttpStatus.OK.value(),
+//                "Get all products discount successfully",
+//                productService.findProductsDiscount()
+//        );
+//    }
 
     @GetMapping("/page-product")
+    @Operation(summary = "Get all products", description = "Get all products for user")
     public Response pageProduct(@RequestParam(defaultValue = "1") int pageNo,
                                 @RequestParam(defaultValue = "10") int pageSize,
                                 @RequestParam(required = false) String[] sort,
@@ -114,6 +121,7 @@ public class ProductController {
     }
 
     @GetMapping("/page-product-discount")
+    @Operation(summary = "Get all products discount", description = "Get all products discount for user")
     public Response pageProductDiscount(@RequestParam(defaultValue = "1") int pageNo,
                                 @RequestParam(defaultValue = "10") int pageSize,
                                 @RequestParam(required = false) String[] sort,

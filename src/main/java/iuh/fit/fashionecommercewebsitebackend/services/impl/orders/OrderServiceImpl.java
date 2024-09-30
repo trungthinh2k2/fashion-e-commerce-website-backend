@@ -1,7 +1,9 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.orders;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderUpdateDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ProductsOrderDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.AddressMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.*;
@@ -208,7 +210,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     @Override
     public Order updateStatus(String id) throws DataNotFoundException {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
         LocalDateTime now = LocalDateTime.now();
         if (order.getStatus().equals(OrderStatus.CANCELLED)) {
             throw new DataNotFoundException("Order has been cancelled");
@@ -222,13 +224,26 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     }
 
     @Override
-    public List<Order> getAllOrdersByEmail(String email) {
-        return orderRepository.findAllByUserEmail(email);
+    public List<Order> getAllOrdersByEmailOrderByOrderDate(String email) {
+        return orderRepository.findAllByUserEmailOrderByOrderDateDesc(email);
     }
 
     @Override
     public List<OrderDetail> getOrderDetailsByOrderId(String orderId) {
         return orderDetailRepository.findByOrderId(orderId);
+    }
+
+    @Override
+    public Order updateOrderStatus(String id, OrderUpdateDto status) throws DataNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
+        order.setStatus(status.getOrderStatus());
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public PageResponse<?> getOrdersForAdminRole(int pageNo, int pageSize, String[] search, String[] sort) {
+        return null;
     }
 
 
