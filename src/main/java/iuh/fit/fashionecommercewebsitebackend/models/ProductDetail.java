@@ -36,4 +36,7 @@ public class ProductDetail {
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    @Column(name = "weight")
+    private  Float weight;
 }

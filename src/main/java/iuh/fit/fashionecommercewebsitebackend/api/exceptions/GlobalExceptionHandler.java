@@ -42,6 +42,4 @@ public class GlobalExceptionHandler extends Throwable {
         return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
     }
 
-
-
 }

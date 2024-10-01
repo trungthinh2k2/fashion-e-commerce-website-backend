@@ -17,4 +17,6 @@ public class ProductDetailDto {
     private Integer sizeId;
     @NotNull(message = "Color ID must not be null")
     private Integer colorId;
+    @NotNull(message = "Weight must not be null")
+    private Float weight;
 }

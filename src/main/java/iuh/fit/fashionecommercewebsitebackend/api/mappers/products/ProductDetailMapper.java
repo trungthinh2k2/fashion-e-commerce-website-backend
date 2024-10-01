@@ -40,6 +40,7 @@ public class ProductDetailMapper {
                 .product(product)
                 .size(size)
                 .color(color)
+                .weight(productDetailDto.getWeight())
                 .build();
     }
 }
