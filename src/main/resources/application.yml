@@ -84,9 +84,3 @@ api:
 ghtk:
   api:
     url: https://services.giaohangtietkiem.vn
-    token: 0892a8de58177f25507d936fa7763fb326adb970
-aws-s3:
-  access-key: AKIA6GBMBGHDNP3QOZNO
-  secret-key: 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
-  region: ap-southeast-1
-  bucket-name: fashion-e-commerce

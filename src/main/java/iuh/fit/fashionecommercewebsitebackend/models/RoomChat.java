@@ -16,9 +16,13 @@ public class RoomChat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roomchat_id", nullable = false)
-    private Integer id;
+    private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "admin_id", nullable = false)
+    private User admin;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

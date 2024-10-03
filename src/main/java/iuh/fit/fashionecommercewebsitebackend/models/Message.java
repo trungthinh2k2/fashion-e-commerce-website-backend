@@ -19,10 +19,10 @@ public class Message extends BaseModel{
         private String id;
 
         @Column(name = "sender_id")
-        private String senderId;
+        private Long senderId;
 
         @Column(name = "receiver_id")
-        private String receiverId;
+        private Long receiverId;
 
         @Column(name = "content")
         private String content;
