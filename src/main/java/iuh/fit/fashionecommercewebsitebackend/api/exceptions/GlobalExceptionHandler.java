@@ -15,31 +15,37 @@ public class GlobalExceptionHandler extends Throwable {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiError handleValidationExceptions(
+    public ResponseError handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String errorMessage = error.getDefaultMessage();
             errors.add(errorMessage);
         });
-        return new ApiError(HttpStatus.BAD_REQUEST.value(), errors);
+        return new ResponseError(HttpStatus.BAD_REQUEST.value(), errors);
     }
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DataNotFoundException.class)
-    public ApiError handleDataNotFoundException(DataNotFoundException ex) {
-        return new ApiError(HttpStatus.NOT_FOUND.value(), List.of(ex.getMessage()));
+    public ResponseError handleDataNotFoundException(DataNotFoundException ex) {
+        return new ResponseError(HttpStatus.NOT_FOUND.value(), List.of(ex.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ExpiredJwtException.class)
-    public ApiError handleExpiredJwtException(ExpiredJwtException ex) {
-        return new ApiError(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage()));
+    public ResponseError handleExpiredJwtException(ExpiredJwtException ex) {
+        return new ResponseError(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
-    public ApiError handleForbiddenException(ForbiddenException ex) {
-        return new ApiError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
+    public ResponseError handleForbiddenException(ForbiddenException ex) {
+        return new ResponseError(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DataExistsException.class)
+    public ResponseError handleDataExistsException(DataExistsException ex) {
+        return new ResponseError(HttpStatus.CONFLICT.value(), List.of(ex.getMessage()));
     }
 
 }

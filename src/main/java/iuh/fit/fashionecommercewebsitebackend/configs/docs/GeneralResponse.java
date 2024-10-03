@@ -10,13 +10,15 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "${api.responseCodes.created.description}",
+        @ApiResponse(responseCode = "200", description = "${api.responseCodes.ok.description}",
                 content = @Content),
         @ApiResponse(responseCode = "400", description = "${api.responseCodes.badRequest.description}",
                 content = @Content),
         @ApiResponse(responseCode = "403", description = "${api.responseCodes.forbidden.description}",
                 content = @Content),
-        @ApiResponse(responseCode = "500", description = "${api.responseCodes.notFound.description}",
+        @ApiResponse(responseCode = "404", description = "${api.responseCodes.notFound.description}",
+                content = @Content),
+        @ApiResponse(responseCode = "500", description = "${api.responseCodes.internalServerError.description}",
                 content = @Content)
 })
 public @interface GeneralResponse {

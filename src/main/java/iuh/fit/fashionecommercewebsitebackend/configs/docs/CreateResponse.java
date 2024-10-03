@@ -21,7 +21,7 @@ import java.lang.annotation.*;
                 content = @Content),
         @ApiResponse(responseCode = "403", description = "${api.responseCodes.forbidden.description}",
                 content = @Content),
-        @ApiResponse(responseCode = "500", description = "${api.responseCodes.dataExists.description}",
+        @ApiResponse(responseCode = "409", description = "${api.responseCodes.dataExists.description}",
                 content = @Content)
 })
 public @interface CreateResponse {

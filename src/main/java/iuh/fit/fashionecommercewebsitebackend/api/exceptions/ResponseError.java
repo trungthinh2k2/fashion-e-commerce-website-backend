@@ -11,11 +11,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ApiError implements Response {
+public class ResponseError implements Response {
     private int status;
     private List<String> errors;
 
-    public ApiError(int status, List<String> errors) {
+    public ResponseError(int status, List<String> errors) {
         this.status = status;
         this.errors = errors;
     }

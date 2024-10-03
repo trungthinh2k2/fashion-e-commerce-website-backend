@@ -3,7 +3,7 @@ spring:
     name: fashion-e-commerce-website-backend
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -28,10 +28,11 @@ spring:
           auth: true
           starttls:
             enable: true
+  flyway:
+    locations: classpath:/dev/db/migration
+    baseline-on-migrate: true
+    baseline-version: 1
 
-aws-s3:
-  region: ap-southeast-1
-  bucket-name: fashion-e-commerce
 logging:
   level:
     org:
@@ -50,6 +51,7 @@ api:
     dataExists.description: The data already exists
     unauthorized.description: The request has not been verified, please log in
     forbidden.description: The user has not been granted permission to use the resource
+    internalServerError.description: An error occurred on the server. Please try again later
   operation:
     create:
       summary: Tạo mới
@@ -82,4 +84,9 @@ api:
 ghtk:
   api:
     url: https://services.giaohangtietkiem.vn
-    token: token
+    token: 0892a8de58177f25507d936fa7763fb326adb970
+aws-s3:
+  access-key: AKIA6GBMBGHDNP3QOZNO
+  secret-key: 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
+  region: ap-southeast-1
+  bucket-name: fashion-e-commerce
