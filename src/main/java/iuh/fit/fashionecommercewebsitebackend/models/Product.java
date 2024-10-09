@@ -1,8 +1,11 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "t_products")
@@ -11,7 +14,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product extends BaseModel{
+@NamedEntityGraphs(
+        @NamedEntityGraph(
+                name = "product-entity-graph",
+                includeAllAttributes = true
+        )
+)
+public class Product extends BaseModel implements Serializable {
 
     @Id
     @Column(name = "product_id", nullable = false)
@@ -44,15 +53,15 @@ public class Product extends BaseModel{
     @Column(name = "buy_quantity")
     private Integer buyQuantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

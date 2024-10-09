@@ -20,4 +20,6 @@ public interface ProductService extends BaseService<Product, String> {
     List<Product> findProductsDiscount();
     PageResponse<?> getProductsForUserRole(int pageNo, int pageSize, String[] search, String[] sort);
     PageResponse<?> getProductsDiscount(int pageNo, int pageSize, String[] search, String[] sort);
+    PageResponse<?> getProductsNewCreatedDate(int pageNo, int pageSize, String[] search, String[] sort);
+    PageResponse<?> getProductsSold(int pageNo, int pageSize, String[] search, String[] sort);
 }

@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MessageMedia {
-
     @Id
     @Column(name = "message_media_id", nullable = false)
     private String id;

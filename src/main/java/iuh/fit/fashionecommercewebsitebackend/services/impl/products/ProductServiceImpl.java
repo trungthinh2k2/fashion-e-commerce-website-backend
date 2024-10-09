@@ -137,6 +137,16 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         return productQuery.getDataDiscount(pageNo, pageSize, search, sort);
     }
 
+    @Override
+    public PageResponse<?> getProductsNewCreatedDate(int pageNo, int pageSize, String[] search, String[] sort) {
+        return productQuery.getDataProductTop20(pageNo, pageSize, search, sort);
+    }
+
+    @Override
+    public PageResponse<?> getProductsSold(int pageNo, int pageSize, String[] search, String[] sort) {
+        return productQuery.getDataProductsSold(pageNo, pageSize, search, sort);
+    }
+
     private void processProductImages(Product product, ProductDto productDto) {
         List<MultipartFile> images = productDto.getImages();
         if (images == null || images.isEmpty()) {

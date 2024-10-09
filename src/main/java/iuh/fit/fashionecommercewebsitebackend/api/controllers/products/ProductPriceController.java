@@ -1,5 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.products;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductPriceDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/productPrices")
 @RequiredArgsConstructor
 @Validated
+@SecurityRequirements(@SecurityRequirement(name = "bearerAuth"))
 public class ProductPriceController {
 
     private final ProductPriceMapper productPriceMapper;

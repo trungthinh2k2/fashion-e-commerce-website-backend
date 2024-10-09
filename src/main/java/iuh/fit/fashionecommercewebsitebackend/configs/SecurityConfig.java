@@ -81,7 +81,8 @@ public class SecurityConfig {
                                     "/api/v1/colors/**",
                                     "/api/v1/sizes/**",
                                     "/api/v1/vouchers/user/**",
-                                    "/api/v1/users/**"
+                                    "/api/v1/users/**",
+                                    "/ws/**"
                                     ).permitAll();
                             author.requestMatchers("/api/v1/orders/user/**").hasRole("USER");
                             author.requestMatchers(

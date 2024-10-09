@@ -122,6 +122,7 @@ public class ProductController {
 
     @GetMapping("/page-product-discount")
     @Operation(summary = "Get all products discount", description = "Get all products discount for user")
+    @FindResponse
     public Response pageProductDiscount(@RequestParam(defaultValue = "1") int pageNo,
                                 @RequestParam(defaultValue = "10") int pageSize,
                                 @RequestParam(required = false) String[] sort,
@@ -131,6 +132,35 @@ public class ProductController {
                 HttpStatus.OK.value(),
                 "Get all products discount successfully",
                 productService.getProductsDiscount(pageNo, pageSize, search, sort)
+        );
+    }
+    @GetMapping("/page-product-top20")
+    @Operation(summary = "Get list products new created date", description = "Get list products new created date for user")
+    @FindResponse
+    public Response pageProductNewCreatedDate(@RequestParam(defaultValue = "1") int pageNo,
+                                        @RequestParam(defaultValue = "10") int pageSize,
+                                        @RequestParam(required = false) String[] sort,
+                                        @RequestParam(required = false, defaultValue = "") String[] search
+    ) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all products new created date successfully",
+                productService.getProductsNewCreatedDate(pageNo, pageSize, search, sort)
+        );
+    }
+
+    @GetMapping("/page-product-sold")
+    @Operation(summary = "Get list products sold", description = "Get list products sold date for user")
+    @FindResponse
+    public Response pageProductsSold(@RequestParam(defaultValue = "1") int pageNo,
+                                              @RequestParam(defaultValue = "20") int pageSize,
+                                              @RequestParam(required = false) String[] sort,
+                                              @RequestParam(required = false, defaultValue = "") String[] search
+    ) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all products sold successfully",
+                productService.getProductsSold(pageNo, pageSize, search, sort)
         );
     }
 }
