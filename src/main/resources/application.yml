@@ -32,12 +32,18 @@ spring:
     locations: classpath:/dev/db/migration
     baseline-on-migrate: true
     baseline-version: 1
-
+    enabled: false
 logging:
   level:
     org:
-      springframework:
-        security: trace
+#      springframework:
+#        security: trace
+      hibernate:
+        sql: debug
+        type:
+          descriptor:
+            sql:
+              basic: trace
 server:
   error:
     include-stacktrace: never

@@ -1,5 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.AddressDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/address")
 @RequiredArgsConstructor
+@SecurityRequirements({@SecurityRequirement(name = "bearerAuth")})
 public class AddressController {
     private final AddressService addressService;
     private final AddressMapper addressMapper;

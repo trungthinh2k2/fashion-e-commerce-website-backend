@@ -18,11 +18,12 @@ public class RoomChat {
     @Column(name = "roomchat_id", nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private User admin;
+    @Column(name = "room_id", nullable = false)
+    private String roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String sender;
+
+    @Column(nullable = false)
+    private String receiver;
 }

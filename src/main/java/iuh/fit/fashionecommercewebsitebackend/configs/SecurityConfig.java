@@ -71,7 +71,7 @@ public class SecurityConfig {
                             author.requestMatchers("/v3/api-docs/**",
                                     "/swagger-ui/**",
                                     "/swagger-ui.html").permitAll();
-                            author.requestMatchers("/api/v1/auth/**").permitAll();
+                            author.requestMatchers("/api/v1/auth/**", "/api/v1/room-chats/**").permitAll();
                             author.requestMatchers(HttpMethod.GET,
                                     "/api/v1/products/**",
                                     "/api/v1/addresses/**",
@@ -87,7 +87,8 @@ public class SecurityConfig {
                             author.requestMatchers("/api/v1/orders/user/**").hasRole("USER");
                             author.requestMatchers(
                                     "/api/v1/users/**",
-                                    "/api/v1/order-details/**"
+                                    "/api/v1/order-details/**",
+                                    "/api/v1/messages/**"
                                     ).authenticated();
                             author.anyRequest().hasRole("ADMIN");
                         }

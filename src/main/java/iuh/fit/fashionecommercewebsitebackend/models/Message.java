@@ -18,11 +18,11 @@ public class Message extends BaseModel{
         @Column(name = "message_id", nullable = false)
         private String id;
 
-        @Column(name = "sender_id")
-        private Long senderId;
+        @Column(name = "sender")
+        private String sender;
 
-        @Column(name = "receiver_id")
-        private Long receiverId;
+        @Column(name = "receiver")
+        private String receiver;
 
         @Column(name = "content")
         private String content;

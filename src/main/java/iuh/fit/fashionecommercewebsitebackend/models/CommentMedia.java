@@ -1,6 +1,5 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
-
 import iuh.fit.fashionecommercewebsitebackend.models.enums.MediaType;
 import jakarta.persistence.*;
 import lombok.*;

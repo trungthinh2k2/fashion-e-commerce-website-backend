@@ -17,7 +17,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
     private String getQuery(String query) {
         return String.format("select distinct %s from Product p left join ProductPrice pp on pp.product = p " +
                 "where (pp.discountedPrice = (select max(pp2.discountedPrice) from ProductPrice pp2 where pp2.product = p) " +
-                "or pp.discountedPrice is null) and p.productStatus = 'ACTIVE'", query);
+                "or pp.discountedPrice is null) and p.productStatus = 'ACTIVE' ", query);
     }
 
     // Lấy dữ liệu sản phẩm theo trang
@@ -37,9 +37,11 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
                         "end))"
                 ));
 
-        createQueryBuilder(search, queryBuilder);
-        sortBy(queryBuilder, sort);
+        createQueryBuilder(search, queryBuilder, " %s p.%s %s ?%s");
+        sortBy(queryBuilder, " order by p.%s %s", sort);
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder.toString(), ProductUserResponse.class);
+//        EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
+//        query.setHint("jakarta.persistence.fetchgraph", entityGraph);
         query.setFirstResult((pageNo - 1) * pageSize);
         query.setMaxResults(pageSize);
         setValueParams(search, query);
@@ -47,7 +49,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         var data = query.getResultList();
 
         StringBuilder countQueryBuilder = new StringBuilder(getQuery("count(*)"));
-        createQueryBuilder(search, countQueryBuilder);
+        createQueryBuilder(search, countQueryBuilder, " %s p.%s %s ?%s");
 
         Query countQuery = entityManager.createQuery(countQueryBuilder.toString());
         setValueParams(search, countQuery);
@@ -73,8 +75,8 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
 
         queryBuilder1.append(" AND pp.issueDate <= CURRENT_DATE AND pp.expiredDate >= CURRENT_DATE");
 
-        createQueryBuilder(search, queryBuilder1);
-        sortBy(queryBuilder1, sort);
+        createQueryBuilder(search, queryBuilder1, " %s p.%s %s ?%s");
+        sortBy(queryBuilder1, " order by p.%s %s", sort);
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder1.toString(), ProductUserResponse.class);
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
         query.setHint("javax.persistence.fetchgraph", entityGraph);
@@ -85,7 +87,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         var data = query.getResultList();
         StringBuilder countQueryBuilder = new StringBuilder(getQuery("count(*)"));
         countQueryBuilder.append(" AND pp.issueDate <= CURRENT_DATE AND pp.expiredDate >= CURRENT_DATE");
-        createQueryBuilder(search, countQueryBuilder);
+        createQueryBuilder(search, countQueryBuilder, " %s p.%s %s ?%s");
 
         Query countQuery = entityManager.createQuery(countQueryBuilder.toString());
         setValueParams(search, countQuery);
@@ -111,12 +113,12 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
 
         queryBuilder1.append(" ORDER BY p.createdAt DESC");
 
-        createQueryBuilder(search, queryBuilder1);
-        sortBy(queryBuilder1, sort);
+        createQueryBuilder(search, queryBuilder1, " %s p.%s %s ?%s");
+        sortBy(queryBuilder1, " order by p.%s %s",sort);
 
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder1.toString(), ProductUserResponse.class);
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        query.setHint("jakata.persistence.fetchgraph", entityGraph);
 
         query.setMaxResults(20);
         setValueParams(search, query);
@@ -124,7 +126,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         var data = query.getResultList();
 
         StringBuilder countQueryBuilder = new StringBuilder(getQuery("count(*)"));
-        createQueryBuilder(search, countQueryBuilder);
+        createQueryBuilder(search, countQueryBuilder, " %s p.%s %s ?%s");
 
         Query countQuery = entityManager.createQuery(countQueryBuilder.toString());
         setValueParams(search, countQuery);
@@ -151,8 +153,8 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         queryBuilder1.append(" AND p.buyQuantity IS NOT NULL");
         queryBuilder1.append(" ORDER BY p.buyQuantity DESC");
 
-        createQueryBuilder(search, queryBuilder1);
-        sortBy(queryBuilder1, sort);
+        createQueryBuilder(search, queryBuilder1, " %s p.%s %s ?%s");
+        sortBy(queryBuilder1, " order by p.%s %s", sort);
 
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder1.toString(), ProductUserResponse.class);
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
@@ -165,7 +167,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         // Đếm tổng số sản phẩm
         StringBuilder countQueryBuilder = new StringBuilder(getQuery("count(*)"));
         countQueryBuilder.append(" AND p.buyQuantity IS NOT NULL");
-        createQueryBuilder(search, countQueryBuilder);
+        createQueryBuilder(search, countQueryBuilder, " %s p.%s %s ?%s");
 
         Query countQuery = entityManager.createQuery(countQueryBuilder.toString());
         setValueParams(search, countQuery);
