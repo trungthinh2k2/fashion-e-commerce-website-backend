@@ -68,4 +68,10 @@ public class User extends BaseModel{
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @Column(name = "google_account_id", length = 100)
+    private String googleAccountId;
+
+    @Column(name = "facebook_account_id", length = 100)
+    private String facebookAccountId;
+
 }

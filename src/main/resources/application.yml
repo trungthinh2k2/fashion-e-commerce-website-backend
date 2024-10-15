@@ -86,7 +86,3 @@ api:
     delete:
       summary: delete data
       description: Xoá một dữ liệu bằng id được truyền lên trong request parameter
-# GHTK API configuration
-ghtk:
-  api:
-    url: https://services.giaohangtietkiem.vn

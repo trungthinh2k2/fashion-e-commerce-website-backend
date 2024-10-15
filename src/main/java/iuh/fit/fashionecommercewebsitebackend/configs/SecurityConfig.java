@@ -1,5 +1,6 @@
 package iuh.fit.fashionecommercewebsitebackend.configs;
 
+import iuh.fit.fashionecommercewebsitebackend.oauth2.Oauth2LoginSuccess;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.UserDetailService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class SecurityConfig {
     private final UserDetailService userDetailService;
     private final Filter filter;
     private final UnauthorizedEntryPoint unauthorizedEntryPoint;
-
+    private final Oauth2LoginSuccess oauth2LoginSuccess;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -99,7 +100,7 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint))
+                .oauth2Login(oauth2-> oauth2.successHandler(oauth2LoginSuccess))
                 .exceptionHandling(exHandler -> exHandler
                         .authenticationEntryPoint(authenticationEntryPoint())  // Trả về 401 khi xác thực thất bại
                         .accessDeniedHandler(accessDeniedHandler())  // Trả về 403 khi người dùng không có quyền truy cập
