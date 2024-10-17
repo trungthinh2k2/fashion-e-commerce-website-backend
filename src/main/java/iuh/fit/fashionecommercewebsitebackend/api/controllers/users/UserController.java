@@ -65,11 +65,11 @@ public class UserController {
 
     @FullUpdateResponse
     @PutMapping("/upload")
-    public Response updateAvatar(@RequestParam("avatar") MultipartFile file, @RequestParam("email") String email) throws Exception {
+    public Response updateAvatar(@RequestParam("avatar") MultipartFile file) throws Exception {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "User updated avatar successfully",
-                userService.updateAvatar(email, s3Upload.uploadFile(file))
+                s3Upload.uploadFile(file)
         );
     }
 

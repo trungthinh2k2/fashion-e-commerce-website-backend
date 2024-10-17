@@ -79,7 +79,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
         sortBy(queryBuilder1, " order by p.%s %s", sort);
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder1.toString(), ProductUserResponse.class);
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        query.setHint("jakata.persistence.fetchgraph", entityGraph);
         query.setFirstResult((pageNo - 1) * pageSize);
         query.setMaxResults(pageSize);
         setValueParams(search, query);
@@ -158,7 +158,7 @@ public class ProductQuery extends BaseCustomizationRepository<Product> {
 
         TypedQuery<ProductUserResponse> query = entityManager.createQuery(queryBuilder1.toString(), ProductUserResponse.class);
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("product-entity-graph");
-        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        query.setHint("jakata.persistence.fetchgraph", entityGraph);
 
         query.setMaxResults(20);
         setValueParams(search, query);

@@ -79,7 +79,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
             throw new DataExistsException("Product already exists");
         }
 
-        String id = "Pro" + LocalDate.now().format(DateTimeFormatter.ofPattern("-ddMMyyyy-")) + UUID.randomUUID().toString().substring(0, 8);
+        String id = "Pro" + LocalDate.now().format(DateTimeFormatter.ofPattern("_ddMMyyyy_")) + UUID.randomUUID().toString().substring(0, 8);
 
         Product product = productMapper.productDtoToProduct(productDto);
         product.setId(id);

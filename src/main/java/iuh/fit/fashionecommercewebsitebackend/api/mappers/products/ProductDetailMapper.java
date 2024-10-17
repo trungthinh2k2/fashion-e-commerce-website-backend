@@ -33,7 +33,7 @@ public class ProductDetailMapper {
         Color color = colorService.findById(productDetailDto.getColorId())
                 .orElseThrow(()->new DataNotFoundException("Color not found"));
         productDetailService.checkExist(product, color, size);
-        String id = "PD-" + product.getId() + "-"+ UUID.randomUUID().toString().substring(0, 5);
+        String id = "PD_" + product.getId() + "_"+ UUID.randomUUID().toString().substring(0, 5);
         return ProductDetail.builder()
                 .id(id)
                 .quantity(productDetailDto.getQuantity())
