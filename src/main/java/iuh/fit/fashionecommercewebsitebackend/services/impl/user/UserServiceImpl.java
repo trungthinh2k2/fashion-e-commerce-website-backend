@@ -44,6 +44,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
         user.setDateOfBirth(userUpdateDto.getDateOfBirth());
         user.setGender(userUpdateDto.getGender());
         user.setAddress(addressMapper.addressDtoToAddress(userUpdateDto.getAddress()));
+        user.setAvatarUrl(userUpdateDto.getAvatarUrl());
         return userRepository.save(user);
     }
 

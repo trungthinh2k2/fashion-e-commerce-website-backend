@@ -20,4 +20,5 @@ public class UserUpdateDto {
     private LocalDateTime dateOfBirth;
     private Gender gender;
     private AddressDto address;
+    private String avatarUrl;
 }
