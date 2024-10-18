@@ -106,18 +106,6 @@ public class AuthController {
         );
     }
 
-    @Operation(summary = "Đổi mật khẩu", description = "Đổi mật khẩu khi đã đăng nhập")
-    @GeneralResponse
-    @PostMapping("/change-password")
-    public Response changePassword(@RequestBody ChangePasswordDto changePasswordDto) throws Exception {
-        authService.changePassword(changePasswordDto);
-        return new ResponseSuccess<>(
-                HttpStatus.OK.value(),
-                "Change password successfully",
-                null
-        );
-    }
-
     @Operation(summary = "Đăng xuất", description = "Đăng xuất tài khoản")
     @GeneralResponse
     @PostMapping("/logout")

@@ -13,6 +13,5 @@ public interface AuthService {
     void forgotPassword(String email) throws Exception;
     void verifyEmailOTPResetPassword(VerifyEmailDto verifyEmailDto) throws Exception;
     void resetPassword(ResetPasswordDto resetPasswordDto) throws Exception;
-    void changePassword(ChangePasswordDto changePasswordDto) throws Exception;
     void logout(String refreshToken) throws Exception;
 }

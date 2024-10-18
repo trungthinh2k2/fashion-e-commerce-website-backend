@@ -100,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
 
         Cookie cookieRefresh = new Cookie("refreshToken", refreshToken);
 //        cookieRefresh.setHttpOnly(true);
-//        cookieRefresh.setSecure(false);
+//        cookieRefresh.setSecure(true);
         cookieRefresh.setPath("/");
         cookieRefresh.setMaxAge(30 * 60); // 30 phút
 
@@ -181,19 +181,6 @@ public class AuthServiceImpl implements AuthService {
             }
         } else {
             throw new DataExistsException("OTP is not correct");
-        }
-    }
-
-    @Override
-    public void changePassword(ChangePasswordDto changePasswordDto) throws Exception {
-        String email = changePasswordDto.getEmail();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new DataNotFoundException("Email not found"));
-        if (passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-            userRepository.save(user);
-        } else {
-            throw new DataExistsException("Old password is not correct");
         }
     }
 

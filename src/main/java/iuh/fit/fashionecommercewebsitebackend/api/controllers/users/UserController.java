@@ -1,15 +1,14 @@
 package iuh.fit.fashionecommercewebsitebackend.api.controllers.users;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.ChangePasswordDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserUpdateDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
-import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
-import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
-import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
-import iuh.fit.fashionecommercewebsitebackend.configs.docs.UpdateOptionsResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.*;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.users.UserService;
 import iuh.fit.fashionecommercewebsitebackend.utils.S3Upload;
 import iuh.fit.fashionecommercewebsitebackend.utils.ValidToken;
@@ -82,6 +81,18 @@ public class UserController {
                 HttpStatus.OK.value(),
                 "User updated successfully",
                 userService.updatePatch(id, data)
+        );
+    }
+
+    @Operation(summary = "Đổi mật khẩu", description = "Đổi mật khẩu khi đã đăng nhập")
+    @GeneralResponse
+    @PostMapping("/change-password")
+    public Response changePassword(@RequestBody ChangePasswordDto changePasswordDto) throws Exception {
+        userService.changePassword(changePasswordDto);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Change password successfully",
+                null
         );
     }
 

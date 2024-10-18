@@ -1,6 +1,8 @@
 package iuh.fit.fashionecommercewebsitebackend.services.impl.user;
 
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.ChangePasswordDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.users.UserUpdateDto;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.AddressMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.User;
@@ -20,10 +22,10 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     private final PasswordEncoder passwordEncoder;
     private final AddressMapper addressMapper;
 
-
     public UserServiceImpl(JpaRepository<User, Long> repository,
                            UserRepository userRepository,
-                           PasswordEncoder passwordEncoder, AddressMapper addressMapper) {
+                           PasswordEncoder passwordEncoder,
+                           AddressMapper addressMapper) {
         super(repository, User.class);
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -49,11 +51,16 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     }
 
     @Override
-    public User updateAvatar(String email, String avatarUrl) throws DataNotFoundException {
+    public void changePassword(ChangePasswordDto changePasswordDto) throws Exception {
+        String email = changePasswordDto.getEmail();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new DataNotFoundException("User not found"));
-        user.setAvatarUrl(avatarUrl);
-        return userRepository.save(user);
+                .orElseThrow(() -> new DataNotFoundException("Email not found"));
+        if (passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+            userRepository.save(user);
+        } else {
+            throw new DataExistsException("Old password is not correct");
+        }
     }
 
     @PostConstruct
