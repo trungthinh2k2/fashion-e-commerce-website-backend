@@ -21,6 +21,7 @@ public class OrderDto {
     private DeliveryMethod deliveryMethod;
     private Double deliveryFee;
     private AddressDto address;
+    private String addressDetail;
     private List<ProductsOrderDto> productsOrderDtos;
     private List<Long> vouchers;
 }

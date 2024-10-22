@@ -40,9 +40,9 @@ public class AuthController {
     public Response verifyEmail(@RequestBody VerifyEmailDto verifyEmailDto) throws Exception {
         authService.verifyEmail(verifyEmailDto);
         return new ResponseSuccess<>(
-            HttpStatus.OK.value(),
-            "Email verified successfully",
-            "You can now login"
+                HttpStatus.OK.value(),
+                "Email verified successfully",
+                "You can now login"
         );
     }
 
@@ -65,7 +65,7 @@ public class AuthController {
         authService.refreshToken(refreshToken, response);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
-                 "Refresh token successfully",
+                "Refresh token successfully",
                 null
         );
     }

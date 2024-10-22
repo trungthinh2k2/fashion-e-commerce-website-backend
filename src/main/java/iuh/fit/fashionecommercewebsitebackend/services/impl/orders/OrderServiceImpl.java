@@ -140,6 +140,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .deliveryFee(shippingFee)
                 .user(user)
                 .address(addressMapper.addressDtoToAddress(orderDto.getAddress()))
+                .addressDetail(orderDto.getAddressDetail())
                 .build();
         order = super.save(order);
 
