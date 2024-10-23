@@ -2,6 +2,7 @@ package iuh.fit.fashionecommercewebsitebackend.services.impl.orders;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ShippingDto;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.ShippingService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -61,6 +62,50 @@ public class ShippingServiceImpl implements ShippingService {
             throw new Exception("Error calculating shipping fee: " + e.getMessage());
         }
     }
+
+    @Override
+    public double calculateShippingFee(ShippingDto shippingDto) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Headers với API Token
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Token", apiToken);
+
+        // Request body theo cấu trúc yêu cầu của GHTK
+        String requestJson = "{"
+                + "\"pick_province\": \"" + shippingDto.getPickProvince() + "\","
+                + "\"pick_district\": \"" + shippingDto.getPickDistrict() + "\","
+                + "\"province\": \"" + shippingDto.getProvince() + "\","
+                + "\"district\": \"" + shippingDto.getDistrict() + "\","
+                + "\"weight\": " + shippingDto.getWeight() + ","
+                + "\"transport\": \"" + shippingDto.getDeliveryMethod().getTransportType() + "\""
+                + "}";
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+
+        try {
+            // Log request details
+            System.out.println("Request URL: " + apiUrl + "/services/shipment/fee");
+            System.out.println("Request Headers: " + headers);
+            System.out.println("Request Body: " + requestJson);
+
+            // Gửi yêu cầu POST đến GHTK API để tính phí vận chuyển
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl + "/services/shipment/fee", entity, String.class);
+
+            // Log response details
+            System.out.println("Response Status Code: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+
+            // Parse response JSON từ API để lấy phí vận chuyển (shipping fee)
+            String responseBody = response.getBody();
+            return extractShippingFeeFromResponse(responseBody);
+
+        } catch (Exception e) {
+            throw new Exception("Error calculating shipping fee: " + e.getMessage());
+        }
+    }
+
     private double extractShippingFeeFromResponse(String responseBody) throws Exception {
         // Sử dụng Jackson ObjectMapper để parse JSON
         ObjectMapper objectMapper = new ObjectMapper();
