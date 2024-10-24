@@ -14,7 +14,6 @@ import iuh.fit.fashionecommercewebsitebackend.models.ids.UserVoucherId;
 import iuh.fit.fashionecommercewebsitebackend.repositories.*;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.ShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     private ProductPriceRepository productPriceRepository;
     private OrderDetailRepository orderDetailRepository;
     private OrderRepository orderRepository;
-    private ShippingService shippingService;
 
     public OrderServiceImpl(JpaRepository<Order, String> repository) {
         super(repository, Order.class);
@@ -90,11 +88,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         this.orderRepository = orderRepository;
     }
 
-    @Autowired
-    public void setShippingService(ShippingService shippingService) {
-        this.shippingService = shippingService;
-    }
-
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public Order save(OrderDto orderDto) throws Exception {
@@ -105,28 +98,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
         double originalAmount = 0;
-        String id = "ORD" + LocalDate.now().format(DateTimeFormatter.ofPattern("-ddMMyyyy-")) + UUID.randomUUID().toString().substring(0, 8);
-
-        // Tính tổng khối lượng hàng từ danh sách sản phẩm
-        double totalWeight = 0;
-        for (ProductsOrderDto productsOrderDto : productsOrderDtos) {
-            ProductDetail productDetail = productDetailRepository.findById(productsOrderDto.getProductDetailId())
-                    .orElseThrow(() -> new DataNotFoundException("Product detail not found"));
-
-            // Lấy khối lượng của sản phẩm và nhân với số lượng
-            totalWeight += productDetail.getWeight() * productsOrderDto.getQuantity();
-        }
-
-        // Tính phí vận chuyển với tổng khối lượng động
-        double shippingFee = shippingService.calculateShippingFee(
-                "Hồ Chí Minh",
-                "Quận 8",
-                orderDto.getAddress().getCity(), // Tỉnh nhận
-                orderDto.getAddress().getDistrict(), // Quận/Huyện nhận
-                totalWeight, // Tổng khối lượng động,
-                String.valueOf(orderDto.getDeliveryMethod().getTransportType()) // Phương thức vận chuyển
-        );
-
+        String id = "ORD" + LocalDate.now().format(DateTimeFormatter.ofPattern("_ddMMyyyy_")) + UUID.randomUUID().toString().substring(0, 8);
         Order order = Order.builder()
                 .id(id)
                 .orderDate(LocalDateTime.now())
@@ -137,14 +109,13 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .buyerName(orderDto.getBuyerName())
                 .originalAmount(originalAmount)
                 .deliveryMethod(orderDto.getDeliveryMethod())
-                .deliveryFee(shippingFee)
+                .deliveryFee(orderDto.getDeliveryFee())
                 .user(user)
                 .address(addressMapper.addressDtoToAddress(orderDto.getAddress()))
                 .addressDetail(orderDto.getAddressDetail())
                 .build();
         order = super.save(order);
-
-        originalAmount = handleAmount(productsOrderDtos, order,originalAmount);  // tien goc hoa don
+        originalAmount = handleAmount(productsOrderDtos, order, originalAmount);
 
         List<Long> vouchers = orderDto.getVouchers();
         if (vouchers != null) {

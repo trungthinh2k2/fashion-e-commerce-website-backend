@@ -3,6 +3,8 @@ package iuh.fit.fashionecommercewebsitebackend.api.controllers.orders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDiscountOrderDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDiscountShipDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.VoucherDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
@@ -68,6 +70,24 @@ public class VoucherController {
                 HttpStatus.OK.value(),
                 "Voucher updated patch successfully",
                 voucherService.updatePatch(id, data)
+        );
+    }
+
+    @PostMapping("/apply/for-order")
+    public Response applyVoucherOrder(@RequestBody ApplyDiscountOrderDto applyDiscountOrderDto) throws Exception {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Voucher applied successfully",
+                voucherService.applyDiscountOrder(applyDiscountOrderDto)
+        );
+    }
+
+    @PostMapping("/apply/for-delivery")
+    public Response applyVoucherShip(@RequestBody ApplyDiscountShipDto applyDiscountShipDto) throws Exception {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Voucher applied successfully",
+                voucherService.applyDiscountShip(applyDiscountShipDto)
         );
     }
 }

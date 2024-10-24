@@ -87,7 +87,7 @@ public class SecurityConfig {
                                     "/ws/**"
                                     ).permitAll();
                             author.requestMatchers(HttpMethod.POST, "/api/v1/shipping/**").permitAll();
-                            author.requestMatchers("/api/v1/orders/user/**").hasRole("USER");
+                            author.requestMatchers("/api/v1/orders/user/**", "/api/v1/vouchers/apply/**").hasRole("USER");
                             author.requestMatchers(
                                     "/api/v1/users/**",
                                     "/api/v1/order-details/**",
