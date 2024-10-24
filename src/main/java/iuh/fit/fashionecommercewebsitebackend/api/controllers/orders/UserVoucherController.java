@@ -12,12 +12,10 @@ import iuh.fit.fashionecommercewebsitebackend.models.UserVoucher;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.UserVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/userVouchers")
+@RequestMapping("/api/v1/user-vouchers")
 @RequiredArgsConstructor
 @SecurityRequirements({@SecurityRequirement(name = "bearerAuth")})
 public class UserVoucherController {
@@ -33,6 +31,15 @@ public class UserVoucherController {
                 HttpStatus.CREATED.value(),
                 "Create user voucher successfully",
                 userVoucherService.save(userVoucher)
+        );
+    }
+
+    @GetMapping("/user/{userId}")
+    public Response getUserVoucherByUserId(@PathVariable Long userId) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get all user vouchers successfully",
+                userVoucherService.findByUserId(userId)
         );
     }
 }
