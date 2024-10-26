@@ -90,7 +90,8 @@ public class SecurityConfig {
                             author.requestMatchers(
                                     "/api/v1/orders/user/**",
                                     "/api/v1/vouchers/apply/**",
-                                    "/api/v1/user-vouchers/user/**"
+                                    "/api/v1/user-vouchers/user/**",
+                                    "/api/v1/payments/**"
                                     ).hasRole("USER");
                             author.requestMatchers(
                                     "/api/v1/users/**",
