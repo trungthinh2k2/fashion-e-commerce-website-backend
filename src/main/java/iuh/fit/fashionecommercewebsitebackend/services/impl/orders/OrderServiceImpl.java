@@ -8,6 +8,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundExcepti
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.AddressMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.*;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.OrderStatus;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.PaymentMethod;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Scope;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.VoucherType;
 import iuh.fit.fashionecommercewebsitebackend.models.ids.UserVoucherId;
@@ -102,7 +103,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         Order order = Order.builder()
                 .id(id)
                 .orderDate(LocalDateTime.now())
-                .status(OrderStatus.PENDING)
+                .status(orderDto.getPaymentMethod() == PaymentMethod.CC ? OrderStatus.NOT_PROCESSED_YET : OrderStatus.PENDING)
                 .paymentMethod(orderDto.getPaymentMethod())
                 .note(orderDto.getNote())
                 .phoneNumber(orderDto.getPhoneNumber())
@@ -114,6 +115,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .address(addressMapper.addressDtoToAddress(orderDto.getAddress()))
                 .addressDetail(orderDto.getAddressDetail())
                 .build();
+
+
         order = super.save(order);
         originalAmount = handleAmount(productsOrderDtos, order, originalAmount);
 
@@ -190,7 +193,6 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                             voucher.setQuantity(quantityStock);
                             voucherRepository.save(voucher);
                     }
-
                 }
             }
         }
@@ -212,10 +214,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             throw new DataNotFoundException("Order has been cancelled");
         }
         if (order.getStatus().equals(OrderStatus.PENDING) && order.getOrderDate().plusHours(2).isAfter(now)) {
+            returnProductsToStockByOrderId(id);
             order.setStatus(OrderStatus.CANCELLED);
         }
         else
             throw new DataNotFoundException("Order can not be cancelled");
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public Order updateStatusPayment(String id) throws DataNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
+        if (order.getStatus().equals(OrderStatus.NOT_PROCESSED_YET)) {
+            order.setStatus(OrderStatus.PENDING);
+        }
         return orderRepository.save(order);
     }
 
@@ -307,5 +320,23 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             }
         }
         return 0;
+    }
+
+    @Override
+    public void returnProductsToStockByOrderId(String orderId) throws DataNotFoundException {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+
+        for (OrderDetail orderDetail : orderDetails) {
+            ProductDetail productDetail = orderDetail.getProductDetail();
+
+            int updatedQuantity = productDetail.getQuantity() + orderDetail.getQuantity();
+            productDetail.setQuantity(updatedQuantity);
+            productDetailRepository.save(productDetail);
+
+            Product product = productDetail.getProduct();
+            product.setTotalQuantity(product.getTotalQuantity() + orderDetail.getQuantity());
+            product.setBuyQuantity(product.getBuyQuantity() - orderDetail.getQuantity());
+            productRepository.save(product);
+        }
     }
 }

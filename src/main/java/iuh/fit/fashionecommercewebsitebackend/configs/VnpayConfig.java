@@ -10,7 +10,7 @@ import java.util.*;
 public class VnpayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_TmnCode = "9JZBHZXS";
-    public static String secretKey = "EFVN6Z8BA4JHOMRKVC62H4XNKRJ07N3J";
+    public static String secretKey = "27TGBX2O2A8OF54A2LE75N403VVNYLNQ";
 
     public static String hashAllFields(Map<String, String> fields) {
         List<String> fieldNames = new ArrayList<>(fields.keySet());

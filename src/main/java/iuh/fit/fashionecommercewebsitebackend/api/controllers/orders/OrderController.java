@@ -45,6 +45,29 @@ public class OrderController {
         );
     }
 
+    @FullUpdateResponse
+    @Operation(summary = "Update order status to pending", description = "Update order status to pending when payment method is CC for user")
+    @PutMapping("/user/update/pending/{id}")
+    public Response updateStatusPending(@PathVariable String id) throws Exception {
+        return new ResponseSuccess<>(
+                HttpStatus.CREATED.value(),
+                "Order pending successfully",
+                orderService.updateStatusPayment(id)
+        );
+    }
+
+    @FullUpdateResponse
+    @Operation(summary = "Revoke quantity product", description = "Revoke quantity product when user cancel order for user")
+    @PutMapping("/user/revoke/{id}")
+    public Response revokeOrder(@PathVariable String id) throws Exception {
+        orderService.returnProductsToStockByOrderId(id);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Order revoked successfully",
+                null
+        );
+    }
+
     @Operation(summary = "Get all orders", description = "Get all orders by username(email) for user")
     @GetMapping("/user/{email}")
     public Response getAll(@PathVariable String email) {

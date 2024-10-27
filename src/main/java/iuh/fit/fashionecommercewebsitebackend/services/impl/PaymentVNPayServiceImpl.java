@@ -25,6 +25,7 @@ public class PaymentVNPayServiceImpl implements PaymentVNPayService {
         String orderType = "other";
         long amount = Integer.parseInt(req.getParameter("amount")) * 100L;
         String bankCode = req.getParameter("bankCode");
+        String orderId = req.getParameter("orderId");
 
         String vnp_TxnRef = VnpayConfig.getRandomNumber(8);
         String vnp_IpAddr = VnpayConfig.getIpAddress(req);
@@ -47,7 +48,7 @@ public class PaymentVNPayServiceImpl implements PaymentVNPayService {
 
         vnp_Params.put("vnp_Locale", "vn");
 
-        String vnp_ReturnUrl = frontendURL + "/payments-success";
+        String vnp_ReturnUrl = frontendURL + "/payments-success?orderId=" + orderId;
         vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
