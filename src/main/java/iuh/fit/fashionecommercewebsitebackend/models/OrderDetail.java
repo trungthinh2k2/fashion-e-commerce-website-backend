@@ -29,4 +29,7 @@ public class OrderDetail {
 
     @Column(name = "total_amount", columnDefinition = "DECIMAL(10,2)")
     private Double total_amount;
+
+    @Column(name = "price_at_create_order", columnDefinition = "DECIMAL(10,2)")
+    private Double priceAtCreateOrder;
 }

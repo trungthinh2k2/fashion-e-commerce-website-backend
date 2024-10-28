@@ -293,6 +293,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             orderDetail.setTotal_amount(price * orderDetail.getQuantity());
             orderDetail.setOrder(order);
             orderDetail.setProductDetail(productDetail);
+            orderDetail.setPriceAtCreateOrder(price);
             orderDetailRepository.save(orderDetail);
             originalAmount += orderDetail.getTotal_amount();
         }

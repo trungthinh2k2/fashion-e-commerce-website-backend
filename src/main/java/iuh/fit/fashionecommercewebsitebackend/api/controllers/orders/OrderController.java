@@ -7,7 +7,9 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderUpdateDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
 import jakarta.validation.Valid;
@@ -31,6 +33,16 @@ public class OrderController {
                 HttpStatus.CREATED.value(),
                 "Order created successfully",
                 orderService.save(orderDto)
+        );
+    }
+
+    @FindResponse
+    @GetMapping("/user/{id}")
+    public Response getById(@PathVariable String id) throws DataNotFoundException {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get order by id successfully",
+                orderService.findById(id)
         );
     }
 
@@ -69,7 +81,7 @@ public class OrderController {
     }
 
     @Operation(summary = "Get all orders", description = "Get all orders by username(email) for user")
-    @GetMapping("/user/{email}")
+    @GetMapping("/user/{email}/all")
     public Response getAll(@PathVariable String email) {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
