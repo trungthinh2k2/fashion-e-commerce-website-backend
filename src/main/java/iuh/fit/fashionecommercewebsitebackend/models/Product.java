@@ -1,6 +1,5 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
