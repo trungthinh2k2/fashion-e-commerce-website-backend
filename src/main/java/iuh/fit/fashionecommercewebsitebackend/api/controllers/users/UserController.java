@@ -96,6 +96,18 @@ public class UserController {
         );
     }
 
+    @GetMapping("/page-users")
+    public Response pageComments(@RequestParam(defaultValue = "1") int pageNo,
+                                 @RequestParam(defaultValue = "10") int pageSize,
+                                 @RequestParam(required = false) String[] search,
+                                 @RequestParam(required = false) String[] sort) throws Exception{
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "get user successfully",
+                userService.getDataWithPage(pageNo, pageSize, search, sort)
+        );
+    }
+
 
 
 }
