@@ -4,6 +4,7 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.OrderUpdateDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ProductsOrderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.socket.MessageResponse;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.AddressMapper;
 import iuh.fit.fashionecommercewebsitebackend.models.*;
@@ -17,6 +18,7 @@ import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     private ProductPriceRepository productPriceRepository;
     private OrderDetailRepository orderDetailRepository;
     private OrderRepository orderRepository;
+    private NotificationRepository notificationRepository;
+    private SimpMessagingTemplate messagingTemplate;
+    private NotificationUserRepository userNotificationRepository;
 
     public OrderServiceImpl(JpaRepository<Order, String> repository) {
         super(repository, Order.class);
@@ -87,6 +92,21 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     @Autowired
     public void setOrderRepository(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setNotificationRepository(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+
+    @Autowired
+    public void setUserNotificationRepository(NotificationUserRepository userNotificationRepository) {
+        this.userNotificationRepository = userNotificationRepository;
+    }
+
+    @Autowired
+    public void setMessagingTemplate(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -149,7 +169,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                             .orElseThrow(() -> new DataNotFoundException("UserVoucher not found"));
                     if (!userVoucher.getIsUsed()) {
                         if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
-                            double discountFee = addVoucherDelivery( order.getDeliveryFee(), voucher, originalAmount);
+                            double discountFee = addVoucherDelivery(order.getDeliveryFee(), voucher, originalAmount);
                             order.setDeliveryFee(order.getDeliveryFee() - discountFee);
                             order.setDiscountAmount(order.getDiscountAmount() == null ? discountFee : order.getDiscountAmount() + discountFee);
                             if (discountFee > 0) {
@@ -169,12 +189,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                         voucher.setQuantity(quantityStock);
                         voucherRepository.save(voucher);
                     }
-                } else  {
+                } else {
                     UserVoucherId userVoucherId1 = new UserVoucherId(user, voucher);
                     Optional<UserVoucher> userVoucher = userVoucherRepository.findById(userVoucherId1);
                     if (userVoucher.isEmpty()) {
                         if (voucher.getVoucherType().equals(VoucherType.FOR_DELIVERY)) {
-                            double discountFee = addVoucherDelivery( order.getDeliveryFee(), voucher, originalAmount);
+                            double discountFee = addVoucherDelivery(order.getDeliveryFee(), voucher, originalAmount);
                             order.setDeliveryFee(order.getDeliveryFee() - discountFee);
                             order.setDiscountAmount(order.getDiscountAmount() == null ? discountFee : order.getDiscountAmount() + discountFee);
                         } else {
@@ -183,15 +203,15 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                                     (order.getDiscountAmount() == null ? 0 : order.getDiscountAmount()) + discountOrder
                             );
                         }
-                            UserVoucher voucherUsages = new UserVoucher();
-                            voucherUsages.setVoucher(voucher);
-                            voucherUsages.setUser(user);
-                            voucherUsages.setIsUsed(true);
-                            userVoucherRepository.save(voucherUsages);
+                        UserVoucher voucherUsages = new UserVoucher();
+                        voucherUsages.setVoucher(voucher);
+                        voucherUsages.setUser(user);
+                        voucherUsages.setIsUsed(true);
+                        userVoucherRepository.save(voucherUsages);
 
-                            int quantityStock = voucher.getQuantity() - 1;
-                            voucher.setQuantity(quantityStock);
-                            voucherRepository.save(voucher);
+                        int quantityStock = voucher.getQuantity() - 1;
+                        voucher.setQuantity(quantityStock);
+                        voucherRepository.save(voucher);
                     }
                 }
             }
@@ -216,8 +236,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         if (order.getStatus().equals(OrderStatus.PENDING) && order.getOrderDate().plusHours(2).isAfter(now)) {
             returnProductsToStockByOrderId(id);
             order.setStatus(OrderStatus.CANCELLED);
-        }
-        else
+        } else
             throw new DataNotFoundException("Order can not be cancelled");
         return orderRepository.save(order);
     }
@@ -247,7 +266,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Order not found"));
         order.setStatus(status.getOrderStatus());
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        handleNotification(order, "Đơn hàng " + order.getId() + " của bạn " + OrderStatus.fromString(status.getOrderStatus().name()).getStatusInVietnamese().toLowerCase());
+        return order;
     }
 
     @Override
@@ -256,7 +277,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     }
 
 
-    private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount) throws DataNotFoundException {
+    private double handleAmount(List<ProductsOrderDto> productsOrderDtos, Order order, double originalAmount)
+            throws DataNotFoundException {
         for (ProductsOrderDto productsOrderDto : productsOrderDtos) {
             ProductDetail productDetail = productDetailRepository.findById(productsOrderDto.getProductDetailId())
                     .orElseThrow(() -> new DataNotFoundException("Product detail not found"));
@@ -279,9 +301,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             double discountedPrice = 0;
             double price = product.getPrice();
             if (!productPrices.isEmpty()) {
-                for (ProductPrice productPrice: productPrices ) {
-                    if(productPrice.getExpiredDate().isAfter(LocalDateTime.now())) {
-                        if(productPrice.getDiscountedPrice() > discountedPrice) {
+                for (ProductPrice productPrice : productPrices) {
+                    if (productPrice.getExpiredDate().isAfter(LocalDateTime.now())) {
+                        if (productPrice.getDiscountedPrice() > discountedPrice) {
                             discountedPrice = productPrice.getDiscountedPrice();
                         }
                     }
@@ -302,7 +324,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
     private double addVoucherDelivery(double discount, Voucher voucher, double originalAmount) {
         if (voucher.getExpiredDate().isAfter(LocalDateTime.now()) && originalAmount >= voucher.getMinOrderAmount()) {
-            double discountF = discount * voucher.getDiscount()/100;
+            double discountF = discount * voucher.getDiscount() / 100;
             if ((discountF >= voucher.getMaxDiscountAmount())) {
                 return voucher.getMaxDiscountAmount();
             } else {
@@ -311,9 +333,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         }
         return 0;
     }
+
     private double addVoucherOrder(double originalAmount, Voucher voucher) {
         if (voucher.getExpiredDate().isAfter(LocalDateTime.now()) && originalAmount >= voucher.getMinOrderAmount()) {
-            double discountedAmount = originalAmount * voucher.getDiscount()/100;
+            double discountedAmount = originalAmount * voucher.getDiscount() / 100;
             if ((discountedAmount >= voucher.getMaxDiscountAmount())) {
                 return voucher.getMaxDiscountAmount();
             } else {
@@ -339,5 +362,23 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             product.setBuyQuantity(product.getBuyQuantity() - orderDetail.getQuantity());
             productRepository.save(product);
         }
+    }
+
+    private void handleNotification(Order order, String text) {
+        Notification notification = new Notification();
+        notification.setContent(text);
+        notification.setScope(Scope.FOR_USER);
+        notification.setNotificationTime(LocalDateTime.now());
+        notificationRepository.save(notification);
+        NotificationUser notificationUser = new NotificationUser();
+        notificationUser.setNotification(notification);
+        notificationUser.setUser(order.getUser());
+        notificationUser.setIsRead(false);
+        userNotificationRepository.save(notificationUser);
+        MessageResponse<Notification> messageResponse = new MessageResponse<>();
+        messageResponse.setData(notification);
+        messageResponse.setType("notification");
+        messagingTemplate.convertAndSendToUser(order.getUser().getEmail(),
+                "/queue/notifications", messageResponse);
     }
 }

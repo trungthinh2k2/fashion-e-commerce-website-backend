@@ -20,9 +20,6 @@ public class Chatbot {
     @Column(name = "chatbot_id")
     private String id;
 
-    @Column(name = "avatar_url")
-    private String avatar;
-
     @Column(name = "message_content", length = 5000)
     private String messageContent;
 

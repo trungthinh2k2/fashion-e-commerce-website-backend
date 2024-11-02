@@ -28,22 +28,16 @@ public class ProductDetailController {
 
     @CreateResponse
     @PostMapping
-    public Response createProductDetail(@RequestBody @Valid ProductDetailDto productDetailDto) throws DataNotFoundException, DataExistsException {
+    public Response createProductDetail(@RequestBody @Valid ProductDetailDto productDetailDto)
+            throws DataNotFoundException, DataExistsException {
         ProductDetail productDetail = productDetailMapper.productDetailDtoToProductDetail(productDetailDto);
-        return new ResponseSuccess<>(
-                HttpStatus.CREATED.value(),
-                "Product detail created successfully",
-                productDetailService.save(productDetail)
-        );
+        return new ResponseSuccess<>(HttpStatus.CREATED.value(), "Product detail created successfully", productDetailService.save(productDetail));
     }
+
 
     @UpdateOptionsResponse
     @PatchMapping("/{id}")
-    public Response updatePatchProductDetail(@PathVariable String id,@RequestBody @Valid UpdateProductDetailDto updateProductDetailDto) throws Exception {
-        return new ResponseSuccess<>(
-                HttpStatus.OK.value(),
-                "Product detail updated successfully",
-                productDetailService.updateQuantity(id, updateProductDetailDto.getQuantity())
-        );
+    public Response updatePatchProductDetail(@PathVariable String id, @RequestBody @Valid UpdateProductDetailDto updateProductDetailDto) throws Exception {
+        return new ResponseSuccess<>(HttpStatus.OK.value(), "Product detail updated successfully", productDetailService.updateQuantity(id, updateProductDetailDto.getQuantity()));
     }
 }

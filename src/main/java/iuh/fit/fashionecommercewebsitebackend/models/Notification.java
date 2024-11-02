@@ -1,6 +1,8 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.Scope;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +25,11 @@ public class Notification {
     @Column(name = "content")
     private String content;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "notification_time")
     private LocalDateTime notificationTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "scope")
+    private Scope scope;
 }
