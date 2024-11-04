@@ -78,11 +78,10 @@ public abstract class BaseCustomizationRepository<T> {
                 Matcher matcher = FILTER_PATTERN.matcher(s);
                 if (matcher.find()) {
                     String operator = OperatorQuery.getOperator(matcher.group(2));
-//                    String operator = matcher.group(2);
                     if (!operator.isEmpty()) {
                         var value = matcher.group(3);
                         if(operator.equals("like")) {
-                            value = String.format("%%%s%%", value);
+                            value = "%" + value + "%";
                         }
                         queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
                     }

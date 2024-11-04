@@ -17,17 +17,7 @@ import java.time.LocalDateTime;
 public class Chatbot {
 
     @Id
-    @Column(name = "chatbot_id")
+    @Column(name = "chatbot_id", length = 50, nullable = false)
     private String id;
 
-    @Column(name = "message_content", length = 5000)
-    private String messageContent;
-
-    @Column(name = "time_stamp")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timeStamp;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 }
