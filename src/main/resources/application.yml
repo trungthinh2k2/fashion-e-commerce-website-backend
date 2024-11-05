@@ -21,7 +21,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: trungthinh2k2@gmail.com
-    password: kcoc zfik rfkt jeng
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -33,6 +33,38 @@ spring:
 #    baseline-on-migrate: true
 #    baseline-version: 1
 #    enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        base-url: https://api.openai.com/v1/chat/completions
+        options:
+          model: gpt-4o
+
+# GHTK API configuration
+ghtk:
+  api:
+    url: https://services.giaohangtietkiem.vn
+    token: ${GHTK_TOKEN}
+aws-s3:
+  access-key: ${ACCESS_KEY}
+  secret-key: ${SECRET_KEY}
+  region: ap-southeast-1
+  bucket-name: fashion-e-commerce
+front-end:
+  url: http://localhost:5173
+back-end:
+  url: http://localhost:8080
 logging:
   level:
     org:

@@ -34,11 +34,11 @@ public class VoucherController {
     @CreateResponse
     @PostMapping
     public Response create(@RequestBody @Valid VoucherDto voucherDto) {
-        Voucher voucher = voucherMapper.voucherDtoToVoucher(voucherDto);
+//        Voucher voucher = voucherMapper.voucherDtoToVoucher(voucherDto);
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Voucher created successfully",
-                voucherService.save(voucher)
+                voucherService.save(voucherDto)
                 );
     }
 
