@@ -3,20 +3,15 @@ package iuh.fit.fashionecommercewebsitebackend.services.impl.chatbot;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.chatbot.ChatBotRequest;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.chatbot.ChatbotResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.Chatbot;
-import iuh.fit.fashionecommercewebsitebackend.models.User;
 import iuh.fit.fashionecommercewebsitebackend.models.chatbot.Conversation;
 import iuh.fit.fashionecommercewebsitebackend.models.chatbot.MessageChatBot;
-import iuh.fit.fashionecommercewebsitebackend.models.enums.Role;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ChatbotRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ConversationRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.MessageChatBotRepository;
-import iuh.fit.fashionecommercewebsitebackend.repositories.UserRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.chatbot.ConversationService;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.chatbot.OpenAIService;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,18 +22,15 @@ import java.util.stream.Collectors;
 public class ConversationServiceImpl implements ConversationService {
 
     private final ConversationRepository conversationRepository;
-    private final UserRepository userRepository;
     private final ChatbotRepository chatbotRepository;
     private final OpenAIService openAIService;
 
     private final MessageChatBotRepository messageChatBotRepository;
 
     public ConversationServiceImpl(ConversationRepository conversationRepository,
-                                   UserRepository userRepository,
                                    ChatbotRepository chatbotRepository,
                                    OpenAIService openAIService, MessageChatBotRepository messageChatBotRepository) {
         this.conversationRepository = conversationRepository;
-        this.userRepository = userRepository;
         this.chatbotRepository = chatbotRepository;
         this.openAIService = openAIService;
         this.messageChatBotRepository = messageChatBotRepository;
@@ -47,10 +39,6 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public ChatbotResponse processChatCompletion(ChatBotRequest chatBotRequest, Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         Conversation conversation = conversationRepository
                 .findByUserIdAndChatbotId(userId, chatBotRequest.getChatbotId())
                 .orElseGet(() -> {

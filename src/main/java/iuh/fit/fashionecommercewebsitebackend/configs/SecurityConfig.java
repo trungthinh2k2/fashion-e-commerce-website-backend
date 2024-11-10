@@ -99,7 +99,8 @@ public class SecurityConfig {
                                     "/api/v1/users/**",
                                     "/api/v1/order-details/**",
                                     "/api/v1/messages/**",
-                                    "/api/v1/notifications/**"
+                                    "/api/v1/notifications/**",
+                                    "/api/v1/statistical/**"
                                     ).authenticated();
                             author.anyRequest().hasRole("ADMIN");
                         }
