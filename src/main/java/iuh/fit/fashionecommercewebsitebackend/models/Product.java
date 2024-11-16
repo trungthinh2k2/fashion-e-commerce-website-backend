@@ -31,6 +31,9 @@ public class Product extends BaseModel implements Serializable {
     @Column( name = "price", columnDefinition = "DECIMAL(10,2)")
     private Double price;
 
+    @Column(name = "input_price", columnDefinition = "DECIMAL(10,2)")
+    private Double inputPrice;
+
     @Column(name = "avg_rating", columnDefinition = "DECIMAL(10,1)")
     private Float avgRating;
 

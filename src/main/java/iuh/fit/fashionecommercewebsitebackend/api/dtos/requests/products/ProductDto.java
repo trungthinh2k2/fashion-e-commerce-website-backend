@@ -14,6 +14,8 @@ import java.util.List;
 public class ProductDto {
     @NotNull(message = "Product name must be not null")
     private String productName;
+    @NotNull(message = "Input price must be not null")
+    private Double inputPrice;
     @NotNull(message = "Price must be not null")
     private Double price;
     @NotNull(message = "Description must be not null")

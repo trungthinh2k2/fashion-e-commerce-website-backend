@@ -33,6 +33,7 @@ public class ProductMapper {
                 .orElseThrow(() -> new DataNotFoundException("Provider not found"));
         return Product.builder()
                 .productName(productDto.getProductName())
+                .inputPrice(productDto.getInputPrice())
                 .price(productDto.getPrice())
                 .description(productDto.getDescription())
                 .productStatus(Status.ACTIVE)
