@@ -8,6 +8,7 @@ import iuh.fit.fashionecommercewebsitebackend.models.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -69,4 +70,7 @@ public class Order extends BaseModel{
     private Address address;
 
     private String addressDetail;
+
+    @Column(name = "estimated_delivery_date")
+    private LocalDate estimatedDeliveryDate;
 }

@@ -22,6 +22,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -120,6 +121,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
 
         double originalAmount = 0;
         String id = "ORD" + LocalDate.now().format(DateTimeFormatter.ofPattern("_ddMMyyyy_")) + UUID.randomUUID().toString().substring(0, 8);
+        LocalDate estimatedDeliveryDate = calculateEstimatedDeliveryDate(orderDto);
         Order order = Order.builder()
                 .id(id)
                 .orderDate(LocalDateTime.now())
@@ -134,6 +136,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
                 .user(user)
                 .address(addressMapper.addressDtoToAddress(orderDto.getAddress()))
                 .addressDetail(orderDto.getAddressDetail())
+                .estimatedDeliveryDate(estimatedDeliveryDate)
                 .build();
 
 
@@ -362,6 +365,32 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
             product.setBuyQuantity(product.getBuyQuantity() - orderDetail.getQuantity());
             productRepository.save(product);
         }
+    }
+
+    private LocalDate calculateEstimatedDeliveryDate(OrderDto orderDto) {
+        int processingDays = 1; // Số ngày xử lý đơn hàng
+        int deliveryDays;
+
+        switch (orderDto.getDeliveryMethod()) {
+            case EXPRESS: // Giao nhanh
+                deliveryDays = 3;
+                break;
+            case ECONOMY: // Giao thường
+                deliveryDays = 7;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown delivery method: " + orderDto.getDeliveryMethod());
+        }
+
+        // Tính ngày giao hàng
+        LocalDate orderDate = LocalDate.now().plusDays(processingDays);
+        LocalDate estimatedDate = orderDate.plusDays(deliveryDays);
+
+        // Loại bỏ ngày cuối tuần (nếu không giao vào cuối tuần)
+        while (estimatedDate.getDayOfWeek() == DayOfWeek.SATURDAY || estimatedDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            estimatedDate = estimatedDate.plusDays(1);
+        }
+        return estimatedDate;
     }
 
     private void handleNotification(Order order, String text) {

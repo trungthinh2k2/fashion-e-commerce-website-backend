@@ -3,8 +3,8 @@ package iuh.fit.fashionecommercewebsitebackend.models.enums;
 public enum OrderStatus {
     NOT_PROCESSED_YET("Chưa được xử lý"),
     PENDING("Đang chờ xử lý"),
-    PROCESSING("Đang xử lý"),
-    SHIPPING("Đang được giao"),
+    PROCESSING("Đã xác nhận đơn hàng"),
+    SHIPPING("Đang vận chuyển"),
     DELIVERED("Đã được giao"),
     CANCELLED("Đã hủy");
 
