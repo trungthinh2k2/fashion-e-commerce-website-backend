@@ -1,5 +1,6 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class Message extends BaseModel{
         @Column(name = "content")
         private String content;
 
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
         @Column(name = "message_time")
         private LocalDateTime messageTime;
 

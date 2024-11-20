@@ -11,10 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -29,11 +26,21 @@ public class MessageController {
     public Response senMessage(@ModelAttribute @Valid MessageDto messageDto,
                                HttpServletRequest req)
             throws Exception {
-        validToken.validToken(messageDto.getSender(), req);
+//        validToken.validToken(messageDto.getSender(), req);
+        System.out.println("MessageController: " + messageDto.getSender() + " " + messageDto.getReceiver() + " " + messageDto.getContent());
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "success",
                 messageService.sendMessage(messageDto)
+        );
+    }
+
+    @GetMapping("/{roomId}")
+    public Response getMessagesByRoomId(@PathVariable String roomId) {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "success",
+                messageService.getMessagesByRoomId(roomId)
         );
     }
 }

@@ -9,6 +9,7 @@ import iuh.fit.fashionecommercewebsitebackend.services.interfaces.chat.RoomChatS
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,11 @@ public class RoomChatServiceImpl extends BaseServiceImpl<RoomChat, Long> impleme
         } else {
             return optional.get();
         }
+    }
+
+    @Override
+    public List<RoomChat> getAllRoomChat() {
+        return roomChatRepository.findAll();
     }
 
 

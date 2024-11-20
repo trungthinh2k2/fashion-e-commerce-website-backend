@@ -9,4 +9,6 @@ import java.util.List;
 public interface MessageService {
     Message sendMessage(MessageDto messageDto) throws DataNotFoundException;
     List<Message> getMessagesByRoomChatId(Long roomChatId);
+
+    List<Message> getMessagesByRoomId(String roomId);
 }

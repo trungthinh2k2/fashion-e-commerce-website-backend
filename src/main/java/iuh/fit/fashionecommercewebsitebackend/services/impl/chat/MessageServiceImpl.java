@@ -61,4 +61,9 @@ public class MessageServiceImpl extends BaseServiceImpl<Message, String> impleme
     public List<Message> getMessagesByRoomChatId(Long roomChatId) {
         return messageRepository.findByRoomChat_Id(roomChatId);
     }
+
+    @Override
+    public List<Message> getMessagesByRoomId(String roomId) {
+        return messageRepository.findByRoomId(roomId);
+    }
 }
