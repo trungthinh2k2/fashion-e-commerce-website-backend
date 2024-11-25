@@ -88,7 +88,7 @@ public class SecurityConfig {
                                     ).permitAll();
                             author.requestMatchers(HttpMethod.POST, "/api/v1/shipping/**").permitAll();
                             author.requestMatchers(
-                                    "/api/v1/orders/user/**",
+//                                    "/api/v1/orders/user/**",
                                     "/api/v1/vouchers/apply/**",
                                     "/api/v1/user-vouchers/user/**",
                                     "/api/v1/payments/**",
@@ -100,7 +100,8 @@ public class SecurityConfig {
                                     "/api/v1/order-details/**",
                                     "/api/v1/messages/**",
                                     "/api/v1/notifications/**",
-                                    "/api/v1/statistical/**"
+                                    "/api/v1/statistical/**",
+                                    "/api/v1/orders/user/**"
                                     ).authenticated();
                             author.anyRequest().hasRole("ADMIN");
                         }

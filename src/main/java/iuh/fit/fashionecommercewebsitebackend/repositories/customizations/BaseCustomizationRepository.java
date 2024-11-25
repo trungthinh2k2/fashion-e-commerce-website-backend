@@ -1,11 +1,14 @@
 package iuh.fit.fashionecommercewebsitebackend.repositories.customizations;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.PageResponse;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.OrderStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +22,7 @@ public abstract class BaseCustomizationRepository<T> {
     protected final Class<T> entityClass;
 
     // Mẫu regex cho filter và sort
-    protected static final Pattern FILTER_PATTERN = Pattern.compile("(.*?)([<>]=?|:|-|!)([^-]*)-?(or)?");
+    protected static final Pattern FILTER_PATTERN = Pattern.compile("(.*?)([<>]=?|:|-|!)([\\d\\w\\s:-]*)-?(or)?");
     protected static final Pattern SORT_PATTERN = Pattern.compile("(\\w+?)(:)(asc|desc)");
 
     protected BaseCustomizationRepository(Class<T> entityClass) {
@@ -80,15 +83,35 @@ public abstract class BaseCustomizationRepository<T> {
                     String operator = OperatorQuery.getOperator(matcher.group(2));
                     if (!operator.isEmpty()) {
                         var value = matcher.group(3);
-                        if(operator.equals("like")) {
-                            value = "%" + value + "%";
+                        if (matcher.group(1).equals("status")) {
+                            try {
+                                OrderStatus orderStatus = OrderStatus.valueOf(value.toUpperCase());
+                                queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, orderStatus);
+                            } catch (IllegalArgumentException e) {
+                                throw new IllegalArgumentException("Invalid orderStatus value: " + value);
+                            }
                         }
-                        queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+                        else if (operator.equals(">=") || operator.equals("<=")) {
+                            if (value.length() == 10) {
+                                value = value + " 00:00:00";
+                            }
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                            LocalDateTime dateTimeValue = LocalDateTime.parse(value, formatter);
+                            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, dateTimeValue);
+                        }
+                        else if (operator.equals("like")) {
+                            value = "%" + value + "%";
+                            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+                        }
+                        else {
+                            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+                        }
                     }
                 }
             }
         }
     }
+
     protected void sortBy(StringBuilder queryBuilder, String queryFormat, String... sort) {
         if (sort != null) {
             for (String s : sort) {

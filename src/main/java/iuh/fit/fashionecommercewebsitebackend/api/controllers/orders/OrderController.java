@@ -28,7 +28,6 @@ public class OrderController {
     @CreateResponse
     @PostMapping("/user/create")
     public Response createOrder(@RequestBody @Valid OrderDto orderDto) throws Exception {
-        System.out.println(orderDto.getEmail());
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Order created successfully",
@@ -93,7 +92,7 @@ public class OrderController {
     @FullUpdateResponse
     @Operation(summary = "Update order status", description = "Update order status for admin")
     @PutMapping("/admin/update/{id}")
-    public Response updateStatus(@PathVariable String id, OrderUpdateDto orderUpdateDto) throws Exception {
+    public Response updateStatus(@PathVariable String id, @RequestBody @Valid OrderUpdateDto orderUpdateDto) throws Exception {
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Order status updated successfully",

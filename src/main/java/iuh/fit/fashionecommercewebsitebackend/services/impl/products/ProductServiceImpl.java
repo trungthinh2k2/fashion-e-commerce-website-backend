@@ -20,6 +20,7 @@ import iuh.fit.fashionecommercewebsitebackend.utils.S3Upload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -74,6 +75,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Product save(ProductDto productDto) throws DataExistsException, DataNotFoundException {
         if (productRepository.existsByProductName(productDto.getProductName())) {
             throw new DataExistsException("Product already exists");
