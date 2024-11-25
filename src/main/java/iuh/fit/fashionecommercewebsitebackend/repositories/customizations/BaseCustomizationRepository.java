@@ -94,10 +94,13 @@ public abstract class BaseCustomizationRepository<T> {
                         else if (operator.equals(">=") || operator.equals("<=")) {
                             if (value.length() == 10) {
                                 value = value + " 00:00:00";
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                LocalDateTime dateTimeValue = LocalDateTime.parse(value, formatter);
+                                queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, dateTimeValue);
                             }
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                            LocalDateTime dateTimeValue = LocalDateTime.parse(value, formatter);
-                            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, dateTimeValue);
+                            else {
+                                queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+                            }
                         }
                         else if (operator.equals("like")) {
                             value = "%" + value + "%";
