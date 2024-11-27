@@ -1,6 +1,7 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,12 @@ public class Message extends BaseModel{
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
         @Column(name = "message_time")
         private LocalDateTime messageTime;
+
+        @Column(name = "message_type")
+        private MessageType messageType;
+
+        @Column(name = "path")
+        private String path;
 
         @ManyToOne
         @JoinColumn(name = "roomchat_id", nullable = false)

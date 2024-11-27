@@ -1,9 +1,9 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
 
+import iuh.fit.fashionecommercewebsitebackend.models.enums.MediaType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.http.MediaType;
 
 @Entity
 @Table(name = "t_message_medias")
@@ -21,6 +21,7 @@ public class MessageMedia {
     private String path;
 
     @Column(name = "media_type")
+    @Enumerated(EnumType.STRING)
     private MediaType mediaType;
 
     @ManyToOne
