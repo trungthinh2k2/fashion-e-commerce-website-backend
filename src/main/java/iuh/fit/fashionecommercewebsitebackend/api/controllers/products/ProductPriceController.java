@@ -12,6 +12,7 @@ import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductPrice;
+import iuh.fit.fashionecommercewebsitebackend.repositories.ProductPriceRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,16 @@ public class ProductPriceController {
                 HttpStatus.OK.value(),
                 "Get product price by id successfully",
                 productPriceService.findById(id).orElseThrow(()-> new DataNotFoundException(" Product price not found"))
+        );
+    }
+
+    @FindResponse
+    @GetMapping("/products/{productId}")
+    public Response getProductPriceByProductId(@PathVariable String productId) throws DataNotFoundException {
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Get product price by id successfully",
+                productPriceService.findAllByProductId(productId)
         );
     }
 }

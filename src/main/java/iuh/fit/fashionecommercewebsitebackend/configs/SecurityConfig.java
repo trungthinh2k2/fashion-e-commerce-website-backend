@@ -88,7 +88,7 @@ public class SecurityConfig {
                                     ).permitAll();
                             author.requestMatchers(HttpMethod.POST, "/api/v1/shipping/**").permitAll();
                             author.requestMatchers(
-//                                    "/api/v1/orders/user/**",
+                                    "/api/v1/orders/user/create",
                                     "/api/v1/vouchers/apply/**",
                                     "/api/v1/user-vouchers/user/**",
                                     "/api/v1/payments/**",

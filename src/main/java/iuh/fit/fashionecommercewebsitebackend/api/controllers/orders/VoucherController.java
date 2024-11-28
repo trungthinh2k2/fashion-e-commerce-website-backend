@@ -13,7 +13,6 @@ import iuh.fit.fashionecommercewebsitebackend.api.mappers.orders.VoucherMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
-import iuh.fit.fashionecommercewebsitebackend.models.Voucher;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class VoucherController {
     @CreateResponse
     @PostMapping
     public Response create(@RequestBody @Valid VoucherDto voucherDto) {
-//        Voucher voucher = voucherMapper.voucherDtoToVoucher(voucherDto);
         return new ResponseSuccess<>(
                 HttpStatus.CREATED.value(),
                 "Voucher created successfully",
