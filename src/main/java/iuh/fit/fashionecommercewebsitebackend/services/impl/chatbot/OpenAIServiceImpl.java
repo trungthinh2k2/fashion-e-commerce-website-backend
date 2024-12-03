@@ -44,6 +44,7 @@ public class OpenAIServiceImpl implements OpenAIService {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", chatBotRequest.getModel());
         requestBody.put("messages", messages);
+        requestBody.put("temperature", 0);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 

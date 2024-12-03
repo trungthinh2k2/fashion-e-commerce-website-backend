@@ -22,4 +22,5 @@ public interface ProductService extends BaseService<Product, String> {
     PageResponse<?> getProductsDiscount(int pageNo, int pageSize, String[] search, String[] sort);
     PageResponse<?> getProductsNewCreatedDate(int pageNo, int pageSize, String[] search, String[] sort);
     PageResponse<?> getProductsSold(int pageNo, int pageSize, String[] search, String[] sort);
+    List<Product> findByProductNameContainingIgnoreCase(String productName);
 }

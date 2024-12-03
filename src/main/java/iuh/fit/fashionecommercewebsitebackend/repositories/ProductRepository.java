@@ -19,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, String>  {
             "                   WHEN pp.expiredDate >= CURRENT_DATE AND pp.issueDate <= CURRENT_DATE THEN pp.discountedAmount " +
             "                   ELSE NULL end, p.price) from Product p left join ProductPrice pp on pp.product = p where (pp.discountedPrice = (select max(pp2.discountedPrice) from ProductPrice pp2 where pp2.product = p) or pp.discountedPrice is null) and p.productStatus = 'ACTIVE'")
     List<Product> findProductsDiscount();
+
+    List<Product> findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(String productName);
+
 }

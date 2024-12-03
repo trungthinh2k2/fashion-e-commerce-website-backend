@@ -9,10 +9,12 @@ import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProductMapper
 import iuh.fit.fashionecommercewebsitebackend.models.Product;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductDetail;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductImage;
+import iuh.fit.fashionecommercewebsitebackend.models.ProductStock;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductImageRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
+import iuh.fit.fashionecommercewebsitebackend.repositories.ProductStockRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.customizations.ProductQuery;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +42,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     private ProductImageRepository productImageRepository;
     private ProductDetailRepository productDetailRepository;
     private ProductQuery productQuery;
+    private ProductStockRepository productStockRepository;
 
     public ProductServiceImpl(JpaRepository<Product, String> repository) {
         super(repository, Product.class);
@@ -74,6 +78,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         this.productQuery = productQuery;
     }
 
+    @Autowired
+    public void setProductStockRepository(ProductStockRepository productStockRepository) {
+        this.productStockRepository = productStockRepository;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Product save(ProductDto productDto) throws DataExistsException, DataNotFoundException {
@@ -89,6 +98,12 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         product = super.save(product);
 
         processProductImages(product, productDto);
+        
+        // Lấy danh sách ProductDetail từ DTO hoặc kho dữ liệu
+        List<ProductDetail> productDetails = productDetailRepository.findByProductId(product.getId());
+
+        // Khởi tạo kho cho các ProductDetail
+        initializeStock(product, productDetails);
 
         return super.save(product);
     }
@@ -149,6 +164,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         return productQuery.getDataProductsSold(pageNo, pageSize, search, sort);
     }
 
+    @Override
+    public List<Product> findByProductNameContainingIgnoreCase(String productName) {
+        return productRepository.findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(productName);
+    }
+
     private void processProductImages(Product product, ProductDto productDto) {
         List<MultipartFile> images = productDto.getImages();
         if (images == null || images.isEmpty()) {
@@ -186,6 +206,17 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
         productImage.setProduct(product);
         productImage.setPath(imagePath);
         productImageRepository.save(productImage);
+    }
+    public void initializeStock(Product product, List<ProductDetail> productDetails) {
+        for (ProductDetail detail : productDetails) {
+            ProductStock stock = new ProductStock();
+            stock.setProduct(product);
+            stock.setProductDetail(detail);
+            stock.setStockQuantity(detail.getQuantity() != null ? detail.getQuantity() : 0);
+            stock.setImportedDate(LocalDateTime.now());
+
+            productStockRepository.save(stock);
+        }
     }
 
 }
