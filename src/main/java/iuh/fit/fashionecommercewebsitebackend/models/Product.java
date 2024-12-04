@@ -1,10 +1,12 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "t_products")
@@ -66,4 +68,8 @@ public class Product extends BaseModel implements Serializable {
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
+
+    @Column(name = "import_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime importDate;
 }

@@ -1,8 +1,11 @@
 package iuh.fit.fashionecommercewebsitebackend.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "t_product_details")
@@ -39,4 +42,8 @@ public class ProductDetail {
 
     @Column(name = "weight")
     private  Float weight;
+
+    @Column(name = "import_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime importDate;
 }

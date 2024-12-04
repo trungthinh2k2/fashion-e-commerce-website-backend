@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class ProductDetailServiceImpl extends BaseServiceImpl<ProductDetail, String> implements ProductDetailService {
 
@@ -40,6 +42,7 @@ public class ProductDetailServiceImpl extends BaseServiceImpl<ProductDetail, Str
         Product product = productDetail.getProduct();
         int quantity = product.getTotalQuantity() != null ? product.getTotalQuantity() : 0;
         product.setTotalQuantity(quantity + productDetail.getQuantity());
+        product.setImportDate(LocalDateTime.now());
         productRepository.save(product);
         return super.save(productDetail);
     }
@@ -52,10 +55,12 @@ public class ProductDetailServiceImpl extends BaseServiceImpl<ProductDetail, Str
         int differencePD = newQuantity + oldQuantity;
 
         productDetail.setQuantity(differencePD);
+        productDetail.setImportDate(LocalDateTime.now());
         productDetailRepository.save(productDetail);
 
         Product product = productDetail.getProduct();
         product.setTotalQuantity(product.getTotalQuantity() + newQuantity);
+        product.setImportDate(LocalDateTime.now());
         productRepository.save(product);
 
         return super.save(productDetail);

@@ -14,6 +14,7 @@ import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.SizeS
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
@@ -41,6 +42,7 @@ public class ProductDetailMapper {
                 .size(size)
                 .color(color)
                 .weight(productDetailDto.getWeight())
+                .importDate(LocalDateTime.now())
                 .build();
     }
 }
