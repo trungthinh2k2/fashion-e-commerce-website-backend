@@ -72,4 +72,7 @@ public class Product extends BaseModel implements Serializable {
     @Column(name = "import_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime importDate;
+
+    @Column(name = "product_name_convert", length = 500)
+    private String productNameConvert;
 }

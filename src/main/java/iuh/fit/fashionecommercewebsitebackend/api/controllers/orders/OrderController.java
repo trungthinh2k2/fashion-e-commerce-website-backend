@@ -57,6 +57,17 @@ public class OrderController {
     }
 
     @FullUpdateResponse
+    @Operation(summary = "Update order status to received", description = "Update order status to received for user")
+    @PutMapping("/user/received/{id}")
+    public Response updateStatusReceived(@PathVariable String id) throws Exception {
+        return new ResponseSuccess<>(
+                HttpStatus.CREATED.value(),
+                "Order received successfully",
+                orderService.updateReceivedStatus(id)
+        );
+    }
+
+    @FullUpdateResponse
     @Operation(summary = "Update order status to pending", description = "Update order status to pending when payment method is CC for user")
     @PutMapping("/user/update/pending/{id}")
     public Response updateStatusPending(@PathVariable String id) throws Exception {

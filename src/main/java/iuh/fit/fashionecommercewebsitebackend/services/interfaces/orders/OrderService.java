@@ -12,6 +12,7 @@ import java.util.List;
 public interface OrderService extends BaseService<Order, String> {
     Order save(OrderDto orderDto) throws Exception;
     Order updateStatus(String id) throws DataNotFoundException;
+    Order updateReceivedStatus(String id) throws DataNotFoundException;
     Order updateStatusPayment(String id) throws DataNotFoundException;
     List<Order> getAllOrdersByEmailOrderByOrderDate(String email);
     List<OrderDetail> getOrderDetailsByOrderId(String orderId);

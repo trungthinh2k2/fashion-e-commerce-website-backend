@@ -13,6 +13,8 @@ import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.Provi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.text.Normalizer;
+
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
@@ -40,6 +42,26 @@ public class ProductMapper {
                 .brand(brand)
                 .category(category)
                 .provider(provider)
+                .productNameConvert(productDto.getProductName() != null ? toLowerCaseAndRemoveAccents(productDto.getProductName()) : null)
                 .build();
+    }
+
+    private String toLowerCaseAndRemoveAccents(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        // Bước 1: Chuyển về chữ thường
+        String result = input.toLowerCase();
+
+        // Bước 2: Chuẩn hóa và loại bỏ dấu
+        result = Normalizer.normalize(result, Normalizer.Form.NFD);
+        result = result.replaceAll("\\p{M}", ""); // Loại bỏ dấu
+
+        // Bước 3: Loại bỏ ký tự đặc biệt (nếu cần)
+        result = result.replaceAll("[^a-z0-9\\s-]", ""); // Chỉ giữ chữ cái, số, khoảng trắng và dấu gạch ngang
+        result = result.replaceAll("\\s+", " ").trim(); // Loại bỏ khoảng trắng thừa
+
+        return result;
     }
 }

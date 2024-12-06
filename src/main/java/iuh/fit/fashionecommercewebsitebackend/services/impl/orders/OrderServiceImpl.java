@@ -245,6 +245,17 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     }
 
     @Override
+    public Order updateReceivedStatus(String id) throws DataNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Order not found"));
+        if (order.getStatus().equals(OrderStatus.DELIVERED)) {
+            order.setStatus(OrderStatus.RECEIVED);
+        } else
+            throw new DataNotFoundException("Order can not be updated to received status");
+        return orderRepository.save(order);
+    }
+
+    @Override
     public Order updateStatusPayment(String id) throws DataNotFoundException {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Order not found"));
