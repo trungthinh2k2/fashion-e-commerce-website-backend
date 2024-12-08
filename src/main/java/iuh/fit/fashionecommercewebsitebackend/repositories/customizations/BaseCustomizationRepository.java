@@ -23,6 +23,11 @@ public abstract class BaseCustomizationRepository<T> {
 
     // Mẫu regex cho filter và sort
     protected static final Pattern FILTER_PATTERN = Pattern.compile("(.*?)([<>]=?|:|-|!)([\\d\\w\\s:-]*)-?(or)?");
+
+    protected static final Pattern FILTER_PATTERN1 = Pattern.compile(
+            "(.*?)([<>]=?|:|-|!)([\\d\\w\\sáàảãạâấầẩẫậăắằẳẵặÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶéèẻẽẹêếềểễệÉÈẺẼẸÊẾỀỂỄỆíìỉĩị" +
+                    "ÍÌỈĨỊóòỏõọôốồổỗộơớờởỡợÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢúùủũụưứừửữựÚÙỦŨỤƯỨỪỬỮỰýỳỷỹỵÝỲỶỸỴđĐ]*)-?(or)?"
+    );
     protected static final Pattern SORT_PATTERN = Pattern.compile("(\\w+?)(:)(asc|desc)");
 
     protected BaseCustomizationRepository(Class<T> entityClass) {

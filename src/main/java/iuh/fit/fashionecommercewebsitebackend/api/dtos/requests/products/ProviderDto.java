@@ -16,5 +16,6 @@ public class ProviderDto {
     private String phoneNumber;
     @NotBlank(message = "Email must be not blank")
     private String email;
-    private Integer addressId;
+//    private Integer addressId;
+    private String address;
 }

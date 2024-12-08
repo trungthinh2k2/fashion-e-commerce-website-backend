@@ -25,5 +25,7 @@ public class Brand implements Serializable {
     @Column(name = "brand_name", length = 500)
     private String brandName;
 
-
+    public Brand(int id) {
+        this.id = id;
+    }
 }

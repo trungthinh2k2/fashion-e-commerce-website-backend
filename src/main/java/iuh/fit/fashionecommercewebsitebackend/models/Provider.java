@@ -30,7 +30,14 @@ public class Provider implements Serializable {
     @Column(name = "phone_number", length = 50)
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private Address address;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "address_id")
+//    private Address address;
+
+    @Column(name = "address", length = 500)
+    private String address;
+
+    public Provider(int id) {
+        this.id = id;
+    }
 }

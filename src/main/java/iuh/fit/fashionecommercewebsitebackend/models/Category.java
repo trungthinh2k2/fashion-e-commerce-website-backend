@@ -23,4 +23,8 @@ public class Category implements Serializable {
 
     @Column(name = "category_name", length = 500)
     private String categoryName;
+
+    public Category(int id) {
+        this.id = id;
+    }
 }

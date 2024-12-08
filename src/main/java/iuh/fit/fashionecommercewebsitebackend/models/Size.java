@@ -27,4 +27,8 @@ public class Size {
 
     @Column(name = "text_size", length = 50)
     private String textSize;
+
+    public Size(int id) {
+        this.id = id;
+    }
 }

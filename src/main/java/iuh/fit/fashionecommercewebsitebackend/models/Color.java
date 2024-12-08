@@ -20,4 +20,8 @@ public class Color {
 
     @Column(name = "color_name", length = 50)
     private String colorName;
+
+    public Color(int id) {
+        this.id = id;
+    }
 }

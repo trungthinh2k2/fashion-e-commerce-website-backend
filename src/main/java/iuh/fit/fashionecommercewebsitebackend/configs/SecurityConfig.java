@@ -84,7 +84,8 @@ public class SecurityConfig {
                                     "/api/v1/vouchers/**",
                                     "/api/v1/users/**",
                                     "/api/v1/brands/**",
-                                    "/ws/**"
+                                    "/ws/**",
+                                    "/api/crawl/**"
                                     ).permitAll();
                             author.requestMatchers(HttpMethod.POST, "/api/v1/shipping/**").permitAll();
                             author.requestMatchers(
