@@ -42,7 +42,27 @@ public class NotifyController {
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
                 "get notifications successfully",
-                notificationService.getNotificationsByUserId(userId)
+                userNotificationService.getNotificationsByUserId(userId)
+        );
+    }
+
+    @DeleteMapping("/delete/{notificationId}/user/{userId}")
+    public Response deleteNotificationUser(@PathVariable Integer notificationId, @PathVariable Long userId) {
+        userNotificationService.deleteNotificationUser(notificationId, userId);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "delete notification user successfully",
+                null
+        );
+    }
+
+    @DeleteMapping("/delete-all/user/{userId}")
+    public Response deleteAllNotificationUser(@PathVariable Long userId) {
+        userNotificationService.deleteAllNotificationUser(userId);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "delete all notification user successfully",
+                null
         );
     }
 }

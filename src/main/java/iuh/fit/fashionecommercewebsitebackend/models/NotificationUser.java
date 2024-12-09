@@ -16,12 +16,12 @@ import lombok.*;
 public class NotificationUser {
 
         @Id
-        @ManyToOne
+        @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "notification_id", nullable = false)
         private Notification notification;
 
         @Id
-        @ManyToOne
+        @ManyToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "user_id", nullable = false)
         private User user;
 

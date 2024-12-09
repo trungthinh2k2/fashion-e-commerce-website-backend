@@ -3,7 +3,6 @@ package iuh.fit.fashionecommercewebsitebackend.services.impl.socket;
 import iuh.fit.fashionecommercewebsitebackend.models.Notification;
 import iuh.fit.fashionecommercewebsitebackend.repositories.NotificationRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.socket.NotificationService;
-import iuh.fit.fashionecommercewebsitebackend.services.interfaces.socket.UserNotificationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -29,4 +29,17 @@ public class UserNotificationServiceImpl implements UserNotificationService {
     public List<NotificationUser> getNotificationsByUserId(Long userId) {
         return notificationUserRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public void deleteNotificationUser(Integer notificationId, Long userId) {
+        NotificationUser notificationUser = notificationUserRepository.findByNotificationIdAndUserId(notificationId, userId);
+        if (notificationUser != null) {
+            notificationUserRepository.delete(notificationUser);
+        }
+    }
+
+    @Override
+    public void deleteAllNotificationUser(Long userId) {
+        notificationUserRepository.deleteAllByUserId(userId);
+    }
 }
