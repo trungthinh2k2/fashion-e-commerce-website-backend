@@ -75,4 +75,7 @@ public class Product extends BaseModel implements Serializable {
 
     @Column(name = "product_name_convert", length = 500)
     private String productNameConvert;
+
+    @Column(name = "product_url", length = 500)
+    private String productUrl;
 }

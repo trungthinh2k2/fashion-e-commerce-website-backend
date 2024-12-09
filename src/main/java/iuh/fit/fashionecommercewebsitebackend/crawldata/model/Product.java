@@ -11,7 +11,7 @@ public class Product {
     private String name;
     private double price;
     @JsonProperty("original_price")
-    private long originalPrice;
+    private double originalPrice;
     @JsonProperty("thumbnail_url")
     private String thumbnailUrl;
 }

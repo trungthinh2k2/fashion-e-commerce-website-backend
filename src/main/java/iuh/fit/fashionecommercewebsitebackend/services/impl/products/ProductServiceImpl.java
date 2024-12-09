@@ -152,7 +152,11 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
 
     @Override
     public List<Product> findByProductNameContainingIgnoreCase(String productName) {
-        return productRepository.findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(productName);
+        List<Product> products = productRepository.findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(productName);
+        for (Product product : products) {
+            product.setProductUrl("http://localhost:5173/products/" + product.getId());
+        }
+        return products;
     }
 
     private void processProductImages(Product product, ProductDto productDto) {

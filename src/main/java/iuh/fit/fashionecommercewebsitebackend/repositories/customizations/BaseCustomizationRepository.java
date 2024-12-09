@@ -25,8 +25,8 @@ public abstract class BaseCustomizationRepository<T> {
     protected static final Pattern FILTER_PATTERN = Pattern.compile("(.*?)([<>]=?|:|-|!)([\\d\\w\\s:-]*)-?(or)?");
 
     protected static final Pattern FILTER_PATTERN1 = Pattern.compile(
-            "(.*?)([<>]=?|:|-|!)([\\d\\w\\sáàảãạâấầẩẫậăắằẳẵặÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶéèẻẽẹêếềểễệÉÈẺẼẸÊẾỀỂỄỆíìỉĩị" +
-                    "ÍÌỈĨỊóòỏõọôốồổỗộơớờởỡợÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢúùủũụưứừửữựÚÙỦŨỤƯỨỪỬỮỰýỳỷỹỵÝỲỶỸỴđĐ]*)-?(or)?"
+            "(.*?)([<>]=?|:|-|!)([áàảãạâấầẩẫậăắằẳẵặÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶéèẻẽẹêếềểễệÉÈẺẼẸÊẾỀỂỄỆíìỉĩị" +
+                    "ÍÌỈĨỊóòỏõọôốồổỗộơớờởỡợÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢúùủũụưứừửữựÚÙỦŨỤƯỨỪỬỮỰýỳỷỹỵÝỲỶỸỴđĐ\\d\\w\\s]*)-?(or)?"
     );
     protected static final Pattern SORT_PATTERN = Pattern.compile("(\\w+?)(:)(asc|desc)");
 

@@ -127,6 +127,7 @@ public class ConversationServiceImpl implements ConversationService {
                 productInfoForOpenAI
                         .append("Sản phẩm: ").append(product.getProductName())
                         .append(", Giá: ").append(product.getPrice()).append(" VNĐ")
+                        .append(", Link: ").append(product.getProductUrl()).append("  ")
                         .append("\n");
             }
             MessageChatBot assistantMessage = new MessageChatBot();

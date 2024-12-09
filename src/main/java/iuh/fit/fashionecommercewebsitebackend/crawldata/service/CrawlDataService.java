@@ -45,10 +45,10 @@ public class CrawlDataService {
             myProduct.setProductName(product.getName());
             myProduct.setProductStatus(Status.ACTIVE);
             myProduct.setThumbnail(product.getThumbnailUrl());
-            myProduct.setPrice((double) product.getOriginalPrice());
+            myProduct.setPrice(product.getOriginalPrice());
             myProduct.setDescription(productDetail.getShortDescription());
             myProduct.setProductNameConvert(toLowerCaseAndRemoveAccents(product.getName()));
-            myProduct.setInputPrice(product.getPrice() / 2);
+            myProduct.setInputPrice(product.getOriginalPrice() / 2);
             int selectedBrand = brands[random.nextInt(brands.length)];
             myProduct.setBrand(new Brand(selectedBrand));
             myProduct.setCategory(new Category(category));
