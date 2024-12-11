@@ -11,6 +11,7 @@ import java.util.List;
 public class ProductDetail {
     @JsonProperty("short_description")
     private String shortDescription;
+    private String description;
     private List<ProductImage> images;
     @JsonProperty("configurable_options")
     private List<Option> configurableOptions;

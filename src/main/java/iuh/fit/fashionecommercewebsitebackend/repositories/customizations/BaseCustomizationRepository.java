@@ -7,8 +7,10 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +27,7 @@ public abstract class BaseCustomizationRepository<T> {
     protected static final Pattern FILTER_PATTERN = Pattern.compile("(.*?)([<>]=?|:|-|!)([\\d\\w\\s:-]*)-?(or)?");
 
     protected static final Pattern FILTER_PATTERN1 = Pattern.compile(
-            "(.*?)([<>]=?|:|-|!)([áàảãạâấầẩẫậăắằẳẵặÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶéèẻẽẹêếềểễệÉÈẺẼẸÊẾỀỂỄỆíìỉĩị" +
-                    "ÍÌỈĨỊóòỏõọôốồổỗộơớờởỡợÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢúùủũụưứừửữựÚÙỦŨỤƯỨỪỬỮỰýỳỷỹỵÝỲỶỸỴđĐ\\d\\w\\s]*)-?(or)?"
+            "(.*?)([<>]=?|:|-|!)([\\d\\w\\sáàảãạâấầẩẫậăắằẳẵặÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶéèẻẽẹêếềểễệÉÈẺẼẸÊẾỀỂỄỆíìỉĩịÍÌỈĨỊóòỏõọôốồổỗộơớờởỡợÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢúùủũụưứừửữựÚÙỦŨỤƯỨỪỬỮỰýỳỷỹỵÝỲỶỸỴđĐ]*)-?(or)?"
     );
     protected static final Pattern SORT_PATTERN = Pattern.compile("(\\w+?)(:)(asc|desc)");
 
@@ -51,13 +52,14 @@ public abstract class BaseCustomizationRepository<T> {
         StringBuilder countQueryBuilder = new StringBuilder(sqlCount);
         createQueryBuilder(search, countQueryBuilder, " %s o.%s %s ?%s");
         Query countQuery = entityManager.createQuery(countQueryBuilder.toString());
+        System.out.println(countQuery.toString());
         setValueParams(search, countQuery);
 
         var data = query.getResultList();
 
         return PageResponse.builder()
                 .data(data)
-                .totalPage((long)Math.ceil((long)countQuery.getSingleResult() * 1.0/pageSize))
+                .totalPage((long) Math.ceil((long) countQuery.getSingleResult() * 1.0 / pageSize))
                 .pageNo(pageNo)
                 .totalElements(data.toArray().length)
                 .build();
@@ -65,10 +67,10 @@ public abstract class BaseCustomizationRepository<T> {
 
 
     protected void createQueryBuilder(String[] search, StringBuilder queryBuilder, String queryFormat) {
-        if(search != null) {
-            for(String s : search) {
+        if (search != null) {
+            for (String s : search) {
                 Matcher matcher = FILTER_PATTERN.matcher(s);
-                if(matcher.find()) {
+                if (matcher.find()) {
                     String operator = OperatorQuery.getOperator(matcher.group(2));
 //                    String operator = matcher.group(2);
                     String format = String.format(queryFormat, matcher.group(4) != null ? "or" : "and",
@@ -80,7 +82,7 @@ public abstract class BaseCustomizationRepository<T> {
         }
     }
 
-    protected void setValueParams(String[] search, Query queryCount) {
+        protected void setValueParams(String[] search, Query queryCount) {
         if (search != null) {
             for (String s : search) {
                 Matcher matcher = FILTER_PATTERN.matcher(s);
@@ -119,6 +121,53 @@ public abstract class BaseCustomizationRepository<T> {
             }
         }
     }
+
+//    protected void setValueParams(String[] search, Query queryCount) {
+//        if (search != null) {
+//            for (String s : search) {
+//                Matcher matcher1 = FILTER_PATTERN.matcher(s);
+//                Matcher matcher2 = FILTER_PATTERN1.matcher(s);
+//
+//                if (matcher1.find()) {
+//                    handleLogicForPattern(matcher1, queryCount, search, s);
+//                }
+//                else if (matcher2.find()) {
+//                    handleLogicForPattern(matcher2, queryCount, search, s);
+//                }
+//            }
+//        }
+//    }
+//    private void handleLogicForPattern(Matcher matcher, Query queryCount, String[] search, String s) {
+//        String operator = OperatorQuery.getOperator(matcher.group(2));
+//        String value = matcher.group(3);
+//
+//        if (!operator.isEmpty()) {
+//            switch (operator) {
+//                case ">=":
+//                case "<=":
+//                    handleComparisonLogic(value, operator, queryCount, search, s);
+//                    break;
+//                case "like":
+//                    value = "%" + value + "%";
+//                    queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+//                    break;
+//                default:
+//                    queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+//            }
+//        }
+//    }
+//
+//    private void handleComparisonLogic(String value, String operator, Query queryCount, String[] search, String s) {
+//        if (value.length() == 10) { // Kiểm tra nếu là định dạng ngày như yyyy-MM-dd
+//            value = value + " 00:00:00";
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//            LocalDateTime dateTimeValue = LocalDateTime.parse(value, formatter);
+//            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, dateTimeValue);
+//        } else {
+//            queryCount.setParameter(Arrays.stream(search).toList().indexOf(s) + 1, value);
+//        }
+//    }
+
 
     protected void sortBy(StringBuilder queryBuilder, String queryFormat, String... sort) {
         if (sort != null) {

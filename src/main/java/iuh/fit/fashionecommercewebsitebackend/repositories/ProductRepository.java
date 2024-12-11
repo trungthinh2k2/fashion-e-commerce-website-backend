@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, String>  {
@@ -21,5 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, String>  {
     List<Product> findProductsDiscount();
 
     List<Product> findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(String productName);
+
+    List<Product> findByImportDateBefore(LocalDateTime importDate);
 
 }

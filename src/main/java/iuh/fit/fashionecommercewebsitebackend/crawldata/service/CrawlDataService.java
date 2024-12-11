@@ -9,9 +9,15 @@ import iuh.fit.fashionecommercewebsitebackend.repositories.ProductDetailReposito
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductImageRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,7 +36,8 @@ public class CrawlDataService {
         return restTemplate.getForObject(url, TikiRes.class);
     }
 
-    public TikiRes getProducts(String url, int[] brands, int category, int provider, int[] size, int[] color) {
+    @Transactional
+    public TikiRes getProducts(String url, int[] brands, int category, int[] providers, int[] size, int[] color) {
         TikiRes tikiRes = restTemplate.getForObject(url, TikiRes.class);
         Random random = new Random();
         assert tikiRes != null;
@@ -46,40 +53,57 @@ public class CrawlDataService {
             myProduct.setProductStatus(Status.ACTIVE);
             myProduct.setThumbnail(product.getThumbnailUrl());
             myProduct.setPrice(product.getOriginalPrice());
-            myProduct.setDescription(productDetail.getShortDescription());
+            String encodedHtml = productDetail.getDescription();
+            String decodedHtml = StringEscapeUtils.unescapeHtml4(encodedHtml);
+
+            Document document = Jsoup.parse(decodedHtml);
+            Elements paragraphs = document.select("p"); // Chọn tất cả các thẻ <p>
+            StringBuilder descriptionBuilder = new StringBuilder();
+
+            for (Element paragraph : paragraphs) {
+                descriptionBuilder.append(paragraph.text()).append("\n"); // Ghép từng đoạn văn
+            }
+
+            String cleanedDescription = descriptionBuilder.toString();
+            myProduct.setDescription(cleanedDescription);
             myProduct.setProductNameConvert(toLowerCaseAndRemoveAccents(product.getName()));
             myProduct.setInputPrice(product.getOriginalPrice() / 2);
             int selectedBrand = brands[random.nextInt(brands.length)];
             myProduct.setBrand(new Brand(selectedBrand));
             myProduct.setCategory(new Category(category));
-            myProduct.setProvider(new Provider(provider));
+            int selectedProvider = providers[random.nextInt(providers.length)];
+            myProduct.setProvider(new Provider(selectedProvider));
             LocalDateTime randomImportDate = randomDateTime(startDate, endDate);
             myProduct.setImportDate(randomImportDate);
             productRepository.save(myProduct);
 
             List<iuh.fit.fashionecommercewebsitebackend.models.ProductDetail> productDetails = new ArrayList<>();
             int totalQuantity = 0;
-            for (int i = 0; i < productDetail.getConfigurableOptions().size(); i++) {
-                int selectedSize = size[random.nextInt(size.length)];
-                int selectedColor = color[random.nextInt(color.length)];
-                iuh.fit.fashionecommercewebsitebackend.models.ProductDetail myProductDetail =
-                        new iuh.fit.fashionecommercewebsitebackend.models.ProductDetail();
-                String id = "PD_" + myProduct.getId() + "_"+ UUID.randomUUID().toString().substring(0, 5);
-                myProductDetail.setId(id);
-                myProductDetail.setProduct(myProduct);
-                myProductDetail.setSize(new Size(selectedSize));
-                myProductDetail.setColor(new Color(selectedColor));
-                int quantity = 5; // Giá trị số lượng giả định
-                myProductDetail.setQuantity(quantity);
-                myProductDetail.setWeight(300F);
-                myProductDetail.setImportDate(randomImportDate);
-                productDetails.add(myProductDetail);
-                totalQuantity += quantity;
+            List<?> configurableOptions = productDetail.getConfigurableOptions();
+            if (configurableOptions != null && !configurableOptions.isEmpty()) {
+                for (int i = 0; i < configurableOptions.size(); i++) {
+                    int selectedSize = size[random.nextInt(size.length)];
+                    int selectedColor = color[random.nextInt(color.length)];
+                    iuh.fit.fashionecommercewebsitebackend.models.ProductDetail myProductDetail =
+                            new iuh.fit.fashionecommercewebsitebackend.models.ProductDetail();
+                    String id = "PD_" + myProduct.getId() + "_"+ UUID.randomUUID().toString().substring(0, 5);
+                    myProductDetail.setId(id);
+                    myProductDetail.setProduct(myProduct);
+                    myProductDetail.setSize(new Size(selectedSize));
+                    myProductDetail.setColor(new Color(selectedColor));
+                    int quantity = 10; // Giá trị số lượng giả định
+                    myProductDetail.setQuantity(quantity);
+                    myProductDetail.setWeight(300F);
+                    myProductDetail.setImportDate(randomImportDate);
+                    productDetails.add(myProductDetail);
+                    totalQuantity += quantity;
+                }
+                myProduct.setTotalQuantity(totalQuantity);
+                productRepository.save(myProduct);
+                productDetailRepository.saveAll(productDetails);
+            } else {
+                System.out.println("ConfigurableOptions is null or empty.");
             }
-            myProduct.setTotalQuantity(totalQuantity);
-            productRepository.save(myProduct);
-            productDetailRepository.saveAll(productDetails);
-
             List<ProductImage> productImages = new ArrayList<>();
             for (int i = 0; i < productDetail.getImages().size(); i++) {
                 ProductImage productImage = new ProductImage();

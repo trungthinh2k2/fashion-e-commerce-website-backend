@@ -139,6 +139,16 @@ public class ConversationServiceImpl implements ConversationService {
 
             messages.add(assistantMessage);
         }
+        else {
+            MessageChatBot assistantMessage = new MessageChatBot();
+            assistantMessage.setRole("assistant");
+            assistantMessage.setContent("Xin lỗi, hiện tại chúng tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.");
+            assistantMessage.setTimestamp(LocalDateTime.now());
+
+            assistantMessage.setConversation(conversation);
+
+            messages.add(assistantMessage);
+        }
 
         fullChatRequest.setMessages(messages);
         return fullChatRequest;

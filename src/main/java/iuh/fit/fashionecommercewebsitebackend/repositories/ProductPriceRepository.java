@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProductPriceRepository extends JpaRepository<ProductPrice, Integer> {
     List<ProductPrice> findAllByProductId(String productId);
+    boolean existsByProductId(String productId);
 }

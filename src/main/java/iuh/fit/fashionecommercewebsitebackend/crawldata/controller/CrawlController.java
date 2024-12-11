@@ -19,16 +19,11 @@ public class CrawlController {
     public TikiRes getProducts(@RequestParam String url,
                                @RequestParam int[] brands,
                                @RequestParam int category,
-                               @RequestParam int provider,
+                               @RequestParam int[] providers,
                                @RequestParam int[] size,
                                @RequestParam int[] color) {
-        return crawlDataService.getProducts(url, brands, category, provider, size, color);
+        return crawlDataService.getProducts(url, brands, category, providers, size, color);
     }
-//
-//    @GetMapping("/detail")
-//    public ProductDetail getProductDetail(@RequestParam String url) {
-//        return crawlDataService.getProductDetail(url);
-//    }
 
     @GetMapping("/preview")
     public TikiRes previewData(@RequestParam String url) {
