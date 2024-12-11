@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgres-db-fashion:
+    container_name: postgres-db-fashion
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      PG_DATABASE: fashion_sales_db
+      PG_DATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - fashion-sales-network
+  postgres-admin-fashion:
+    container_name: postgres-admin-db
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - fashion-sales-network
+
+networks:
+  fashion-sales-network:
+    driver: bridge
+volumes:
+  postgres:
+  pgadmin:

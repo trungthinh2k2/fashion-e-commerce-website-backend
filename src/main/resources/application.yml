@@ -1,0 +1,120 @@
+spring:
+  application:
+    name: fashion-e-commerce-website-backend
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fashion_sales_db
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: trungthinh2k2@gmail.com
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+#  flyway:
+#    locations: classpath:/dev/db/migration
+#    baseline-on-migrate: true
+#    baseline-version: 1
+#    enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        base-url: https://api.openai.com/v1/chat/completions
+        options:
+          model: gpt-4o
+
+# GHTK API configuration
+ghtk:
+  api:
+    url: https://services.giaohangtietkiem.vn
+    token: ${GHTK_TOKEN}
+aws-s3:
+  access-key: ${ACCESS_KEY}
+  secret-key: ${SECRET_KEY}
+  region: ap-southeast-1
+  bucket-name: fashion-e-commerce
+front-end:
+  url: http://localhost:5173
+back-end:
+  url: http://localhost:8080
+logging:
+  level:
+    org:
+#      springframework:
+#        security: trace
+      hibernate:
+        sql: debug
+        type:
+          descriptor:
+            sql:
+              basic: trace
+server:
+  error:
+    include-stacktrace: never
+
+api:
+  responseCodes:
+    ok.description: Successfully
+    created.description: The data was created successfully
+    badRequest.description: Error data, request, or invalid data. See details in the response message
+    notFound.description: The requested data does not exist
+    dataExists.description: The data already exists
+    unauthorized.description: The request has not been verified, please log in
+    forbidden.description: The user has not been granted permission to use the resource
+    internalServerError.description: An error occurred on the server. Please try again later
+  operation:
+    create:
+      summary: Tạo mới
+      description: Lưu mới dữ liệu bới object được gửi lên trong body request
+    partial-update:
+      summary: update options
+      description: |
+        Cập nhật một hoặc nhiều thông tin của dữ liệu
+    full-update:
+      summary: update
+      description: |
+        Cập nhật toàn bộ thông tin của dữ liệu theo object trong body request
+    options-update:
+      summary: update options
+      description: |
+        Cập nhật một hoặc nhiều thông tin của dữ liệu
+    get-detail:
+      summary: Get detailed information
+      description: Lấy thông tin chi tiết của dữ liệu có id được gửi trong path parameter
+    get-list:
+      summary: Get list
+      description: Lấy danh sách dữ liệu theo các tham số được gửi lên
+    find:
+      summary: find
+      description: Tìm các dữ liệu theo các tham số được gửi lên
+    delete:
+      summary: delete data
+      description: Xoá một dữ liệu bằng id được truyền lên trong request parameter
