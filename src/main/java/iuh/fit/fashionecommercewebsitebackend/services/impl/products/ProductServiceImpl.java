@@ -18,6 +18,7 @@ import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductService;
 import iuh.fit.fashionecommercewebsitebackend.utils.S3Upload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,8 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     private ProductImageRepository productImageRepository;
     private ProductDetailRepository productDetailRepository;
     private ProductQuery productQuery;
+    @Value("${front-end.url}")
+    private String frontEndUrl;
 
     public ProductServiceImpl(JpaRepository<Product, String> repository) {
         super(repository, Product.class);
@@ -154,7 +157,7 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String> impleme
     public List<Product> findByProductNameContainingIgnoreCase(String productName) {
         List<Product> products = productRepository.findTop5ByProductNameContainingIgnoreCaseOrderByBuyQuantityDesc(productName);
         for (Product product : products) {
-            product.setProductUrl("http://localhost:5173/products/" + product.getId());
+            product.setProductUrl(frontEndUrl + "/products/" + product.getId());
         }
         return products;
     }
