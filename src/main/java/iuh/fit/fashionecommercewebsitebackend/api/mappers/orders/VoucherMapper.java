@@ -2,6 +2,7 @@ package iuh.fit.fashionecommercewebsitebackend.api.mappers.orders;
 
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.VoucherDto;
 import iuh.fit.fashionecommercewebsitebackend.models.Voucher;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,7 @@ public class VoucherMapper {
                 .maxDiscountAmount(voucherDto.getMaxDiscountAmount())
                 .minOrderAmount(voucherDto.getMinOrderAmount())
                 .quantity(voucherDto.getQuantity())
+                .voucherStatus(Status.ACTIVE)
                 .build();
     }
 }

@@ -15,7 +15,9 @@ import iuh.fit.fashionecommercewebsitebackend.models.enums.VoucherType;
 import iuh.fit.fashionecommercewebsitebackend.models.ids.UserVoucherId;
 import iuh.fit.fashionecommercewebsitebackend.repositories.*;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
+import iuh.fit.fashionecommercewebsitebackend.services.interfaces.EmailService;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.OrderService;
+import iuh.fit.fashionecommercewebsitebackend.utils.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -45,9 +47,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     private NotificationRepository notificationRepository;
     private SimpMessagingTemplate messagingTemplate;
     private NotificationUserRepository userNotificationRepository;
+    private InvoiceRepository invoiceRepository;
+    private final EmailService emailService;
 
-    public OrderServiceImpl(JpaRepository<Order, String> repository) {
+    public OrderServiceImpl(JpaRepository<Order, String> repository, EmailService emailService) {
         super(repository, Order.class);
+        this.emailService = emailService;
     }
 
     @Autowired
@@ -108,6 +113,11 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
     @Autowired
     public void setMessagingTemplate(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+    }
+
+    @Autowired
+    public void setInvoiceRepository(InvoiceRepository invoiceRepository) {
+        this.invoiceRepository = invoiceRepository;
     }
 
     @Override
@@ -275,14 +285,38 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, String> implements 
         return orderDetailRepository.findByOrderId(orderId);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     @Override
-    public Order updateOrderStatus(String id, OrderUpdateDto status) throws DataNotFoundException {
+    public Order updateOrderStatus(String id, OrderUpdateDto status) throws Exception {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Order not found"));
         order.setStatus(status.getOrderStatus());
         orderRepository.save(order);
+
+        if (status.getOrderStatus() == OrderStatus.PROCESSING) {
+            Invoice invoice = createInvoiceForOrder(order);
+            emailService.sendHtmlMailInvoice(invoice);
+        }
+
         handleNotification(order, "Đơn hàng " + order.getId() + " của bạn " + OrderStatus.fromString(status.getOrderStatus().name()).getStatusInVietnamese().toLowerCase());
         return order;
+    }
+
+    private Invoice createInvoiceForOrder(Order order) {
+        Invoice invoice = new Invoice();
+        invoice.setId("INV_" + order.getId());
+        invoice.setOrder(order);
+        invoice.setInvoiceDate(LocalDateTime.now());
+        invoice.setPaymentMethod(order.getPaymentMethod());
+        invoice.setBuyerName(order.getBuyerName());
+        invoice.setPhoneNumber(order.getPhoneNumber());
+        invoice.setAddressDetail(order.getAddressDetail());
+        invoice.setOriginalAmount(order.getOriginalAmount());
+        invoice.setDeliveryFee(order.getDeliveryFee());
+        invoice.setDiscountAmount(order.getDiscountAmount());
+        invoice.setDiscountPrice(order.getDiscountPrice());
+        invoice.setDeliveryMethod(order.getDeliveryMethod());
+        return invoiceRepository.save(invoice);
     }
 
     @Override

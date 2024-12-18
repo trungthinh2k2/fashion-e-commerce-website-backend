@@ -5,14 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProductPriceDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
-import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.products.ProductPriceMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
 import iuh.fit.fashionecommercewebsitebackend.models.ProductPrice;
-import iuh.fit.fashionecommercewebsitebackend.repositories.ProductPriceRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.products.ProductPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +70,16 @@ public class ProductPriceController {
                 HttpStatus.OK.value(),
                 "Get product price by id successfully",
                 productPriceService.findAllByProductId(productId)
+        );
+    }
+
+    @DeleteResponse
+    @DeleteMapping("/delete/{id}")
+    public Response deleteProductPrice(@PathVariable Integer id) throws DataNotFoundException {
+        productPriceService.deleteById(id);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Product price deleted successfully "+ id
         );
     }
 }

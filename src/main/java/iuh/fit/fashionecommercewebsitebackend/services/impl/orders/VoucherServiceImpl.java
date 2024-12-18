@@ -4,13 +4,12 @@ import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDisc
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDiscountShipDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.VoucherDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.socket.MessageResponse;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.orders.VoucherMapper;
-import iuh.fit.fashionecommercewebsitebackend.models.Notification;
-import iuh.fit.fashionecommercewebsitebackend.models.NotificationUser;
-import iuh.fit.fashionecommercewebsitebackend.models.User;
-import iuh.fit.fashionecommercewebsitebackend.models.Voucher;
+import iuh.fit.fashionecommercewebsitebackend.models.*;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Scope;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.VoucherType;
 import iuh.fit.fashionecommercewebsitebackend.repositories.NotificationRepository;
 import iuh.fit.fashionecommercewebsitebackend.repositories.NotificationUserRepository;
@@ -19,7 +18,6 @@ import iuh.fit.fashionecommercewebsitebackend.repositories.VoucherRepository;
 import iuh.fit.fashionecommercewebsitebackend.services.impl.BaseServiceImpl;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.VoucherService;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -93,9 +91,9 @@ public class VoucherServiceImpl extends BaseServiceImpl<Voucher, Long> implement
 
         String discountContent = "Bạn đang có mã giảm giá " + voucher.getDiscount() + "% dành cho ";
         if (voucher.getVoucherType() == VoucherType.FOR_PRODUCT) {
-            discountContent += "đơn hàng";
+            discountContent += "đơn hàng từ ngày " + voucher.getStartDate();
         } else {
-            discountContent += "phí vận chuyển";
+            discountContent += "phí vận chuyển từ ngày " + voucher.getStartDate();
         }
         notification.setContent(discountContent);
 
@@ -118,5 +116,13 @@ public class VoucherServiceImpl extends BaseServiceImpl<Voucher, Long> implement
         messagingTemplate.convertAndSend("/topic/notifications", messageResponse);
 
         return voucher;
+    }
+
+    @Override
+    public void deactivateVoucher(Long id) throws DataExistsException, DataNotFoundException {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Voucher not found"));
+        voucher.setVoucherStatus(Status.INACTIVE);
+        voucherRepository.save(voucher);
     }
 }

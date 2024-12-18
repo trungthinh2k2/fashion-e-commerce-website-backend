@@ -20,6 +20,9 @@ public class Address {
     @Column(name = "street", length = 50)
     private String street;
 
+    @Column(name = "ward", length = 50)
+    private String ward;
+
     @Column(name = "district", length = 50)
     private String district;
 

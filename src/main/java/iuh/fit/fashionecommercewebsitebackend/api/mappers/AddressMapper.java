@@ -10,6 +10,7 @@ public class AddressMapper {
     public Address addressDtoToAddress(AddressDto addressDto) {
         return Address.builder()
                 .street(addressDto.getStreet())
+                .ward(addressDto.getWard())
                 .district(addressDto.getDistrict())
                 .city(addressDto.getCity())
                 .build();

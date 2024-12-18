@@ -2,6 +2,7 @@ package iuh.fit.fashionecommercewebsitebackend.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.Scope;
+import iuh.fit.fashionecommercewebsitebackend.models.enums.Status;
 import iuh.fit.fashionecommercewebsitebackend.models.enums.VoucherType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,5 +56,9 @@ public class Voucher extends BaseModel{
 
     @Column(name = "min_order_amount", columnDefinition = "decimal(10,2)")
     private Double minOrderAmount;
+
+    @Column(name = "voucher_status")
+    @Enumerated
+    private Status voucherStatus;
 }
 

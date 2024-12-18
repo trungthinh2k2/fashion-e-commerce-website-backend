@@ -6,13 +6,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDiscountOrderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.ApplyDiscountShipDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.orders.VoucherDto;
+import iuh.fit.fashionecommercewebsitebackend.api.dtos.requests.products.ProviderDto;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.Response;
 import iuh.fit.fashionecommercewebsitebackend.api.dtos.response.ResponseSuccess;
+import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataExistsException;
 import iuh.fit.fashionecommercewebsitebackend.api.exceptions.DataNotFoundException;
 import iuh.fit.fashionecommercewebsitebackend.api.mappers.orders.VoucherMapper;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.CreateResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.DeleteResponse;
 import iuh.fit.fashionecommercewebsitebackend.configs.docs.FindAllResponse;
+import iuh.fit.fashionecommercewebsitebackend.configs.docs.FullUpdateResponse;
+import iuh.fit.fashionecommercewebsitebackend.models.Provider;
+import iuh.fit.fashionecommercewebsitebackend.models.Voucher;
 import iuh.fit.fashionecommercewebsitebackend.services.interfaces.orders.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -61,13 +66,15 @@ public class VoucherController {
                 null
         );
     }
-
-    @PatchMapping("/{id}")
-    public Response updatePatch(@PathVariable Long id, @RequestBody Map<String, ?> data) throws DataNotFoundException {
+    @FullUpdateResponse
+    @PutMapping("/{id}")
+    public Response updateVoucher(@PathVariable long id, @Valid @RequestBody VoucherDto voucherDto) throws DataNotFoundException {
+        Voucher voucher = voucherMapper.voucherDtoToVoucher(voucherDto);
+        voucher.setId(id);
         return new ResponseSuccess<>(
                 HttpStatus.OK.value(),
-                "Voucher updated patch successfully",
-                voucherService.updatePatch(id, data)
+                "Voucher updated successfully",
+                voucherService.update(id, voucher)
         );
     }
 
@@ -86,6 +93,16 @@ public class VoucherController {
                 HttpStatus.OK.value(),
                 "Voucher applied successfully",
                 voucherService.applyDiscountShip(applyDiscountShipDto)
+        );
+    }
+    @PutMapping("/delete/{id}")
+    @Operation(summary = "Deactivate voucher", description = "Deactivate voucher by id")
+    public Response deactivateVoucher(@PathVariable Long id) throws DataExistsException, DataNotFoundException {
+        voucherService.deactivateVoucher(id);
+        return new ResponseSuccess<>(
+                HttpStatus.OK.value(),
+                "Voucher deactivate successfully",
+                null
         );
     }
 }

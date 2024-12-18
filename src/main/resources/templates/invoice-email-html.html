@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hóa Đơn</title>
+</head>
+<body>
+<div style="border: 1px; padding: 4px">
+    <div style="text-align: center;">
+        <h1 style="color: blue;">Hóa đơn thanh toán</h1>
+    </div>
+    <p><b>Mã hóa đơn:</b> <span th:text="${id}"></span></p>
+    <p><b>Ngày tạo hóa đơn:</b> <span th:text="${invoiceDate}"></span></p>
+    <p><b>Người lập hóa đơn:</b> <span>Admin</span></p>
+    <p><b>Người mua:</b> <span th:text="${buyerName}"></span></p>
+    <p><b>Số điện thoại:</b> <span th:text="${phoneNumber}"></span></p>
+    <p><b>Địa chỉ giao hàng:</b> <span th:text="${addressDetail}"></span></p>
+    <!--    <hr>-->
+    <h3>Thông tin đơn hàng:</h3>
+    <div style="display: flex; justify-content: center">
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Kích thước</th>
+                <th>Màu sắc</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Tổng tiền</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${orderDetails}">
+                <td th:text="${item.productDetail.getProduct().getProductName()}"></td>
+                <td th:text="${item.productDetail.getSize().getDisplaySize()}"></td>
+                <td th:text="${item.productDetail.getColor().getColorName()}"></td>
+                <td th:text="${item.getQuantity()}"></td>
+                <td th:text="${item.priceAtCreateOrder}"></td>
+                <td th:text="${item.total_amount}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--    <hr>-->
+    <p><b>Tổng số tiền:</b> <span th:text="${originalAmount}"></span></p>
+    <p><b>Phí giao hàng:</b> <span th:text="${deliveryFee}"></span></p>
+    <p><b>Tổng giảm giá:</b> <span th:text="${discountAmount ?: 0.0}"></span></p>
+    <p><b>Tổng thanh toán:</b> <span th:text="${discountPrice}"></span></p>
+</div>
+</body>
+</html>

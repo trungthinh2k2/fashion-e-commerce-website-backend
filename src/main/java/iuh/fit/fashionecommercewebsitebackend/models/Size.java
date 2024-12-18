@@ -31,4 +31,11 @@ public class Size {
     public Size(int id) {
         this.id = id;
     }
+
+    public String getDisplaySize() {
+        if (sizeType == SizeType.NUMBER && numberSize != null) {
+            return numberSize.toString();
+        }
+        return textSize;
+    }
 }

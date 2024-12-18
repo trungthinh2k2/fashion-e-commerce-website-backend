@@ -12,6 +12,8 @@ import lombok.Setter;
 public class AddressDto {
     @NotBlank(message = "Street must be not blank")
     private String street;
+    @NotBlank(message = "Ward must be not blank")
+    private String ward;
     @NotBlank(message = "District must be not blank")
     private String district;
     @NotBlank(message = "City must be not blank")

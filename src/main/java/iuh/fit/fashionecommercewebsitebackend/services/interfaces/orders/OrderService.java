@@ -17,7 +17,7 @@ public interface OrderService extends BaseService<Order, String> {
     List<Order> getAllOrdersByEmailOrderByOrderDate(String email);
     List<OrderDetail> getOrderDetailsByOrderId(String orderId);
 
-    Order updateOrderStatus(String orderId, OrderUpdateDto status) throws DataNotFoundException;
+    Order updateOrderStatus(String orderId, OrderUpdateDto status) throws Exception;
     PageResponse<?> getOrdersForAdminRole(int pageNo, int pageSize, String[] search, String[] sort);
 
     void returnProductsToStockByOrderId(String orderId) throws DataNotFoundException;
